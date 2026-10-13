@@ -163,11 +163,11 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
  .pbar{flex:none;flex-wrap:nowrap;margin-bottom:10px}
  .pbar .bar{padding:7px 16px;gap:18px;border-radius:12px;min-width:0}.pbar .bar .n{font-size:17px}.pbar .bar .k{font-size:11px}
  .pbar .tog{white-space:nowrap}
- .app{flex:1;min-height:0;grid-template-columns:400px 1fr;gap:12px;align-items:stretch}
+ .app{flex:1;min-height:0;grid-template-columns:370px 1fr;gap:12px;align-items:stretch}
  .inbox{position:static;height:100%;min-height:0;display:flex;flex-direction:column}
  .ftabs{padding:7px 8px;flex:none}.ft{padding:4px 10px;font-size:12.5px}
- .ilist{flex:1;min-height:0;max-height:none;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(16,minmax(26px,1fr));grid-auto-flow:column;align-content:start}
- .it{padding:0 9px;border-right:1px solid var(--line)}
+ .ilist{flex:1;min-height:0;max-height:none;overflow:auto;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-flow:row;align-content:start}
+ .it{padding:0 10px;border-right:0}.it.tight{font-size:11px}.it.tight .tid,.it.tight .sbj{font-size:11px}.it.tight .sd,.it.tight .dd{width:7px;height:7px}
  .ilist.one{grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-auto-flow:row;grid-auto-rows:36px}.ilist.one .it{border-right:0}
  .work{height:100%;min-height:0;gap:10px}
  .tl{flex:none;padding:6px 12px;border-radius:12px}.ts{padding:2px 10px;font-size:12.5px}
@@ -419,14 +419,16 @@ function bar(){const rs=rowsOf(),n=rs.length,sent=rs.filter(r=>st(r)==='sent').l
  const saved=rs.reduce((a,r)=>a+(st(r)==='sent'?MAN-(edited[eng+'|'+r.ticket_id]?2.5:1.0):0),0);
  const B=$('#statbar');B.textContent='';[['Pending',n-sent-esc],['Sent',sent],['Escalated',esc],['Edited',ed],['Time saved',saved.toFixed(1)+' min']].forEach(([k,v])=>{const d=el('div');d.appendChild(el('div','k',k));d.appendChild(el('div','n',String(v)));B.appendChild(d)});
  const p=el('div','prog');const i=el('i');i.style.width=((sent+esc)/n*100)+'%';p.appendChild(i);B.appendChild(p)}
-function inbox(){const L=$('#ilist');L.textContent='';L.classList.toggle('one',filter!=='all');const F=$('#ftabs');F.textContent='';
+function inbox(){const L=$('#ilist');L.textContent='';const F=$('#ftabs');F.textContent='';
  [['all','All'],['pending','Pending'],['mgr','Manager'],['done','Done']].forEach(([k,l])=>{const b=el('button','ft'+(filter===k?' on':''),l);b.onclick=()=>{filter=k;inbox()};F.appendChild(b)});
  const rs=rowsOf().filter(r=>filter==='all'||(filter==='pending'&&st(r)==='pending')||(filter==='mgr'&&r.result.decision==='escalate')||(filter==='done'&&st(r)!=='pending'));
  rs.forEach(r=>{const b=el('button','it'+(r.ticket_id===sel?' on':'')+(st(r)!=='pending'?' done':''));b.title=r.ticket_id+' · '+D.tickets[r.ticket_id].subject+' · '+D.tickets[r.ticket_id].from_email;
   b.appendChild(el('span','sd '+st(r)));b.appendChild(el('b','tid',r.ticket_id));b.appendChild(el('span','sbj',D.tickets[r.ticket_id].subject));
   if(needsLook(r))b.appendChild(el('b','att','!'));const dd=el('i','dd');dd.style.background='var(--d-'+r.result.decision+')';b.appendChild(dd);
   b.onclick=()=>{sel=r.ticket_id;inbox();renderTicket()};L.appendChild(b)});
- if(!rs.length)L.appendChild(el('div','empty','Nothing here.'))}
+ if(!rs.length)L.appendChild(el('div','empty','Nothing here.'));fitRows(L,rs.length)}
+function fitRows(L,n){if(!n||innerWidth<=900){L.style.gridAutoRows='';return}const h=Math.max(16,Math.min(34,Math.floor(L.clientHeight/n)));L.style.gridAutoRows=h+'px';L.querySelectorAll('.it').forEach(b=>b.classList.toggle('tight',h<22))}
+addEventListener('resize',()=>{const L=$('#ilist');if(L&&L.children.length)fitRows(L,L.querySelectorAll('.it').length)});
 function renderPlatform(){if(!rowsOf().length)return;engSel.value=eng;if(!sel)sel=(rowsOf().find(r=>st(r)==='pending')||rowsOf()[0]).ticket_id;bar();inbox();renderTicket()}
 function steps(r){const s=['Read email'];r.tool_calls.forEach(c=>s.push(c.tool==='lookup_order'?'Look up '+(c.input.order_id||'order'):'List orders'));s.push('Apply '+((r.result.rules_cited||[]).join(', ')||'policy'));s.push('Draft reply');if(r.reflection)s.push('Check draft');return s}
 function factsNode(r){const f=el('div');if(!r.tool_calls.length){f.appendChild(el('div','fact','This engine has no tools: no order lookup.'));return f}
@@ -486,7 +488,7 @@ boot();
 if(SELFTEST){try{if(skipFn)skipFn();const click=()=>document.querySelector('.acts .go').click();const n0=rowsOf().filter(r=>st(r)==='pending').length;
  click();const n1=rowsOf().filter(r=>st(r)==='pending').length;undo();const n2=rowsOf().filter(r=>st(r)==='pending').length;
  const ac=document.querySelector('.acts'),apr=ac.getBoundingClientRect(),actsFit=[...ac.children].every(c=>c.getBoundingClientRect().right<=apr.right+1),chips=document.querySelectorAll('.achk').length,items=document.querySelectorAll('.it').length,noScroll=document.documentElement.scrollHeight<=innerHeight+2;
- document.title='SELFTEST '+JSON.stringify({pending_before:n0,after_approve:n1,after_undo:n2,chips,items,noScroll,actsFit,saved:!!localStorage.getItem(LS)})}catch(e){document.title='SELFTEST ERROR '+e.message}}
+ document.title='SELFTEST '+JSON.stringify({pending_before:n0,after_approve:n1,after_undo:n2,chips,items,noScroll,actsFit,listFits:(()=>{const L=$('#ilist');return L.scrollHeight<=L.clientHeight+1})(),rowH:$('#ilist').style.gridAutoRows,saved:!!localStorage.getItem(LS)})}catch(e){document.title='SELFTEST ERROR '+e.message}}
 </script></body></html>
 """
 
