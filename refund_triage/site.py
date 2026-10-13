@@ -536,7 +536,8 @@ def build(run: Path, out: Path, video: Path | None, repeat: Path | None = None, 
     (out / "data" / "results.json").write_text(json.dumps(data, ensure_ascii=False))
     if video and video.exists():
         shutil.copy(video, out / "demo.mp4")
-        vhtml = '<video controls preload="metadata" src="demo.mp4"></video>'
+        poster = ' poster="poster.jpg"' if (out / "poster.jpg").exists() else ""
+        vhtml = f'<video controls preload="metadata" src="demo.mp4"{poster}></video>'
     else:
         vhtml = '<div class="soon">The demo video will be added here.</div>'
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
