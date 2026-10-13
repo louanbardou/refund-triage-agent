@@ -32,3 +32,6 @@ DECISIONS = ["approve_refund", "store_credit", "reject", "ask_info", "escalate"]
 MANUAL_MINUTES = {"read": 0.5, "find_facts": 2.0, "compose": 1.5, "check": 0.5, "send": 0.5}
 REVIEW_MINUTES_APPROVE = 1.0   # read draft + facts side by side, click approve
 REVIEW_MINUTES_REVISE = 2.5    # read, rewrite part of the draft, send
+
+# Assumed fully loaded staff cost, USD per hour. An assumption, not a measurement; change it to your own figure.
+STAFF_USD_PER_HOUR = 25.0

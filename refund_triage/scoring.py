@@ -14,7 +14,7 @@ import math
 import re
 import statistics
 
-from .config import MANUAL_MINUTES, REVIEW_MINUTES_APPROVE, REVIEW_MINUTES_REVISE
+from .config import MANUAL_MINUTES, REVIEW_MINUTES_APPROVE, REVIEW_MINUTES_REVISE, STAFF_USD_PER_HOUR
 from .data import load_orders
 
 MONEY = {"approve_refund", "store_credit"}
@@ -228,6 +228,8 @@ def summarize(tickets: list, records: list) -> dict:
             "reflection_revisions": sum(bool(r.get("reflection") and r["reflection"].get("ok") is False) for r in rs),
             "reflection_failures": sum(bool(r.get("reflection") and r["reflection"].get("ok") is None) for r in rs),
             "staff_minutes_per_ticket": round(statistics.mean(mins), 2),
+            "staff_cost_per_ticket_usd": round(statistics.mean(mins) / 60 * STAFF_USD_PER_HOUR, 4),
+            "all_in_cost_per_ticket_usd": round(statistics.mean(mins) / 60 * STAFF_USD_PER_HOUR + statistics.mean(cost), 4),
             "task_success_by_set": {st: [sum(s["success"] for s, r in zip(sc, rs) if by_id[r["ticket_id"]].get("set") == st),
                                          sum(1 for r in rs if by_id[r["ticket_id"]].get("set") == st)]
                                     for st in sorted({t.get("set", "core") for t in tickets})},
@@ -238,5 +240,7 @@ def summarize(tickets: list, records: list) -> dict:
             "failure_counts": {t: sum(1 for s in sc if s["ticket_id"] == t and not s["success"])
                                for t in sorted({s["ticket_id"] for s in sc if not s["success"]})},
         }
-    out["manual"] = {"n": len(tickets), "staff_minutes_per_ticket": round(staff_minutes("manual", True), 2)}
+    man = staff_minutes("manual", True)
+    out["manual"] = {"n": len(tickets), "staff_minutes_per_ticket": round(man, 2),
+                     "all_in_cost_per_ticket_usd": round(man / 60 * STAFF_USD_PER_HOUR, 4), "staff_usd_per_hour": STAFF_USD_PER_HOUR}
     return out

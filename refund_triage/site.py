@@ -212,8 +212,8 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
  <div class="bento">
   <div class="card"><h3>Task success</h3><div class="cs">Share of tickets passing every check. Whiskers: 95% interval.</div><div id="c-succ"></div></div>
   <div class="card"><h3>Staff time per ticket</h3><div class="cs">Minutes, modelled from assumed step times.</div><div id="c-time"></div></div>
-  <div class="card"><h3>Cost per 1,000 tickets</h3><div class="cs">US dollars, model tokens only.</div><div id="c-cost"></div></div>
-  <div class="card"><h3>Latency per ticket</h3><div class="cs">Seconds, mean over tickets.</div><div id="c-lat"></div></div>
+  <div class="card"><h3>Cost per 1,000 tickets, all-in</h3><div class="cs">US dollars: staff time at an assumed $25/h plus model tokens.</div><div id="c-cost"></div></div>
+  <div class="card"><h3>Machine time per ticket</h3><div class="cs">Seconds the model takes to produce a draft; mean over tickets.</div><div id="c-lat"></div></div>
   <div class="card full" id="heatcard"><h3>Where each system fails</h3><div class="cs">One cell per ticket. Hover for the failed checks; click to open the ticket in the platform.</div>
    <div class="heat"><div class="hg" id="heat"></div></div>
    <div class="legend"><span><i style="background:var(--good)">✓</i>All checks passed</span><span><i style="background:var(--bad)">✕</i>At least one check failed</span></div></div>
@@ -274,7 +274,7 @@ function parseHash(){const p=location.hash.slice(1).split('&'),o={};p.slice(1).f
 addEventListener('hashchange',()=>boot());
 
 const A=S.agent||S[ORDER[ORDER.length-1]];
-[[pct(A.task_success),'Task success',D.summary._meta.n_tickets+' tickets'],[A.staff_minutes_per_ticket.toFixed(1)+' min','Staff time per ticket','↓ '+Math.round((1-A.staff_minutes_per_ticket/MAN)*100)+'% vs '+MAN.toFixed(1)+' min manual (modelled)','pos'],['$'+A.cost_per_ticket_usd.toFixed(4),'Model cost per ticket','tokens only'],[A.latency_mean_s+' s','Latency per ticket','mean']]
+[[pct(A.task_success),'Task success',D.summary._meta.n_tickets+' tickets'],[A.staff_minutes_per_ticket.toFixed(1)+' min','Staff time per ticket','↓ '+Math.round((1-A.staff_minutes_per_ticket/MAN)*100)+'% vs '+MAN.toFixed(1)+' min manual (modelled)','pos'],['$'+A.all_in_cost_per_ticket_usd.toFixed(2),'Cost per ticket, all-in','↓ '+Math.round((1-A.all_in_cost_per_ticket_usd/S.manual.all_in_cost_per_ticket_usd)*100)+'% vs $'+S.manual.all_in_cost_per_ticket_usd.toFixed(2)+' manual (staff at $'+S.manual.staff_usd_per_hour+'/h + model)','pos'],[A.latency_mean_s+' s','Machine time per ticket','mean, per draft']]
  .forEach(([v,l,s,c])=>{const t=el('div','tile');t.appendChild(el('div','l',l));t.appendChild(el('div','v',v));t.appendChild(el('div','s'+(c?' '+c:''),s));$('#tiles').appendChild(t)});
 
 const niceMax=v=>{if(v<=0)return 1;const e=Math.pow(10,Math.floor(Math.log10(v))),f=v/e,n=f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10;return n*e};
@@ -292,8 +292,9 @@ function drawResults(){
  const tm=it(m=>({value:m.staff_minutes_per_ticket,text:m.staff_minutes_per_ticket.toFixed(1),tip:m.staff_minutes_per_ticket.toFixed(2)+' modelled staff minutes per ticket'}));
  tm.unshift({label:'Fully manual',color:'#52514e',value:MAN,text:MAN.toFixed(1),tip:'Assumed manual handling time: '+MAN.toFixed(1)+' min'});
  hbar($('#c-time'),tm,niceMax(MAN*1.05),v=>v.toFixed(v%1?1:0));
- const cm=Math.max(...ORDER.map(s=>S[s].cost_per_ticket_usd*1000),.01);
- hbar($('#c-cost'),it(m=>({value:m.cost_per_ticket_usd*1000,text:'$'+(m.cost_per_ticket_usd*1000).toFixed(2),tip:'$'+(m.cost_per_ticket_usd*1000).toFixed(2)+' per 1,000 tickets ($'+m.cost_per_ticket_usd.toFixed(5)+' each)'})),niceMax(cm*1.05),v=>'$'+(Number.isInteger(v)?v:v.toFixed(2)));
+ const ci=it(m=>({value:m.all_in_cost_per_ticket_usd*1000,text:'$'+Math.round(m.all_in_cost_per_ticket_usd*1000).toLocaleString('en-US'),tip:'All-in $'+m.all_in_cost_per_ticket_usd.toFixed(3)+' per ticket = staff $'+m.staff_cost_per_ticket_usd.toFixed(3)+' + model $'+m.cost_per_ticket_usd.toFixed(5)+' (assumed $'+S.manual.staff_usd_per_hour+'/h)'}));
+ ci.unshift({label:'Fully manual',color:'#52514e',value:S.manual.all_in_cost_per_ticket_usd*1000,text:'$'+Math.round(S.manual.all_in_cost_per_ticket_usd*1000).toLocaleString('en-US'),tip:'Manual handling at the assumed staff cost'});
+ hbar($('#c-cost'),ci,niceMax(S.manual.all_in_cost_per_ticket_usd*1000*1.05),v=>'$'+Math.round(v).toLocaleString('en-US'));
  const lm=Math.max(...ORDER.map(s=>S[s].latency_p95_s),.5);
  hbar($('#c-lat'),it(m=>({value:m.latency_mean_s,text:m.latency_mean_s.toFixed(1)+' s',tip:'Mean '+m.latency_mean_s+' s, 95th percentile '+m.latency_p95_s+' s'})),niceMax(lm*1.05),v=>v.toFixed(v%1?1:0)+'s');
  takeaways();heat();
@@ -302,7 +303,7 @@ function takeaways(){const T=$('#take');T.textContent='';const llm=ORDER.filter(
  const ks=llm.map(s=>Math.round(S[s].task_success*S[s].n)),n=S[llm[0]].n,lo=Math.min(...ks),hi=Math.max(...ks);
  const items=[['Accuracy is at the ceiling','Every model system passes '+(lo===hi?lo:lo+'–'+hi)+' of '+n+' tickets, so these checks cannot rank them.'+(D.repeat?' Decisions were identical across '+D.repeat.runs+' repeated runs.':'')]];
  if(S.agent&&S.b1_access){items.push(['The gap is staff time','Modelled '+S.agent.staff_minutes_per_ticket.toFixed(1)+' min with the agent vs '+S.b1_access.staff_minutes_per_ticket.toFixed(1)+' min pasting by hand. It rests on an assumed 2.5 min manual lookup.']);
-  items.push(['It costs more and is slower',(S.agent.cost_per_ticket_usd/S.b1_access.cost_per_ticket_usd).toFixed(1)+'× the cost and '+S.agent.latency_mean_s+' s vs '+S.b1_access.latency_mean_s+' s per ticket.'])}
+  items.push(['Model cost is small next to staff time','Tokens: $'+(S.agent.cost_per_ticket_usd*1000).toFixed(2)+' per 1,000 tickets ('+(S.agent.cost_per_ticket_usd/S.b1_access.cost_per_ticket_usd).toFixed(1)+'× paste). Staff time at $'+S.manual.staff_usd_per_hour+'/h: $'+(S.agent.staff_cost_per_ticket_usd*1000).toFixed(0)+' vs $'+Math.round(S.b1_access.staff_cost_per_ticket_usd*1000).toLocaleString('en-US')+' pasting. An assumption.'])}
  items.forEach(([h,t])=>{const c=el('div','card');c.appendChild(el('b','',h));c.appendChild(el('span','',t));T.appendChild(c)})}
 function heat(){const H=$('#heat');H.textContent='';const ids=[...new Set(D.rows.map(r=>r.ticket_id))].sort();H.style.gridTemplateColumns='128px repeat('+ids.length+',1fr)';
  H.appendChild(el('div'));ids.forEach(i=>H.appendChild(el('div','hh',String(+i.slice(1)))));
@@ -310,8 +311,8 @@ function heat(){const H=$('#heat');H.textContent='';const ids=[...new Set(D.rows
   ids.forEach(id=>{const r=D.rows.find(x=>x.system===s&&x.ticket_id===id);if(!r){H.appendChild(el('div'));return}const c=el('button','cell '+(r.score.success?'p':'f'),r.score.success?'✓':'✕');
    tip(c,id+' · '+D.tickets[id].subject+(r.score.success?': all checks passed':': failed '+r.score.failed.map(k=>CHK[k]||k).join(', '))+(D.tickets[id].label_note?' · '+D.tickets[id].label_note:''));
    c.onclick=()=>{eng=s;sel=id;go('platform')};H.appendChild(c)})});
- const tb=$('#restable');tb.textContent='';const hr=el('tr');['System','Task success','95% interval','Decision acc.','Wrong-money','Reply flags','Latency mean / p95','Cost / ticket','Staff min'].forEach(h=>hr.appendChild(el('th','',h)));tb.appendChild(hr);
- ORDER.forEach(s=>{const m=S[s],r=el('tr');[NAME[s],pct(m.task_success),pct(m.task_success_ci95[0])+' – '+pct(m.task_success_ci95[1]),pct(m.decision_accuracy),m.wrong_money_decisions,m.reply_flag_tickets,m.latency_mean_s+' / '+m.latency_p95_s+' s','$'+m.cost_per_ticket_usd.toFixed(5),m.staff_minutes_per_ticket.toFixed(2)].forEach(v=>r.appendChild(el('td','',String(v))));tb.appendChild(r)})}
+ const tb=$('#restable');tb.textContent='';const hr=el('tr');['System','Task success','95% interval','Decision acc.','Wrong-money','Reply flags','Latency mean / p95','Model $ / ticket','All-in $ / ticket','Staff min'].forEach(h=>hr.appendChild(el('th','',h)));tb.appendChild(hr);
+ ORDER.forEach(s=>{const m=S[s],r=el('tr');[NAME[s],pct(m.task_success),pct(m.task_success_ci95[0])+' – '+pct(m.task_success_ci95[1]),pct(m.decision_accuracy),m.wrong_money_decisions,m.reply_flag_tickets,m.latency_mean_s+' / '+m.latency_p95_s+' s','$'+m.cost_per_ticket_usd.toFixed(5),'$'+m.all_in_cost_per_ticket_usd.toFixed(3),m.staff_minutes_per_ticket.toFixed(2)].forEach(v=>r.appendChild(el('td','',String(v))));tb.appendChild(r)})}
 
 let eng=S.agent?'agent':ORDER[0],sel=null,filter='all',timer=null,typer=null,ANIM=false,forceAnim=false;
 const status={},processed={},edited={};
