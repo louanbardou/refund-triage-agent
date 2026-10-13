@@ -144,6 +144,29 @@ def score(ticket: dict, record: dict) -> dict:
             "checks": checks, "failed": [k for k, v in checks.items() if not v]}
 
 
+# Reply-quality flags: defects an independent review found that the pass/fail checks do not cover.
+# They are REPORTED SEPARATELY and never change task success (the success rules were fixed before these were added).
+_QUALITY = {
+    "completed_action": r"\b(?:we have|we've|has been|have been|i have|i've) (?:cancel+ed|refunded|processed)\b",
+    "invented_condition": r"original packaging|original box",
+    "process_leak": r"(?:staff|team) member (?:reviews|will review) this (?:reply|draft)|reviewed by a staff",
+    "photo_claim": r"based on the photo|the photo (?:shows|confirms)|from the photo you",
+    "identity_disclosure": r"does not match|doesn't match|different (?:order )?number|under your email",
+}
+
+
+def quality_flags(ticket: dict, record: dict) -> list:
+    reply = (record["result"].get("draft_reply") or "").lower()
+    flags = []
+    for name, pat in _QUALITY.items():
+        if name == "identity_disclosure" and "R8" not in ticket["expected"]["rules"]:
+            continue
+        hit = re.search(pat, reply) if name == "identity_disclosure" else claim_violated([pat], reply)  # a negated disclosure is still a disclosure
+        if hit:
+            flags.append(name)
+    return flags
+
+
 def staff_minutes(system: str, success: bool) -> float:
     """Modelled staff minutes per ticket. Assumptions are in config.py; they are not measured."""
     manual = sum(MANUAL_MINUTES.values())
@@ -158,8 +181,14 @@ def staff_minutes(system: str, success: bool) -> float:
 
 
 def _p95(xs):
+    """95th percentile, linear interpolation between order statistics (same as numpy's default)."""
     xs = sorted(xs)
-    return xs[min(len(xs) - 1, int(round(0.95 * (len(xs) - 1))))] if xs else 0.0
+    if not xs:
+        return 0.0
+    k = 0.95 * (len(xs) - 1)
+    lo = int(k)
+    hi = min(lo + 1, len(xs) - 1)
+    return xs[lo] + (xs[hi] - xs[lo]) * (k - lo)
 
 
 def wilson(k: int, n: int, z: float = 1.96):
@@ -202,6 +231,9 @@ def summarize(tickets: list, records: list) -> dict:
             "task_success_by_set": {st: [sum(s["success"] for s, r in zip(sc, rs) if by_id[r["ticket_id"]].get("set") == st),
                                          sum(1 for r in rs if by_id[r["ticket_id"]].get("set") == st)]
                                     for st in sorted({t.get("set", "core") for t in tickets})},
+            "reply_flag_tickets": sum(1 for r in rs if quality_flags(by_id[r["ticket_id"]], r)),
+            "reply_flags": {r["ticket_id"]: quality_flags(by_id[r["ticket_id"]], r) for r in reversed(rs)
+                            if quality_flags(by_id[r["ticket_id"]], r)},
             "failures": {s["ticket_id"]: s["failed"] for s in reversed(sc) if not s["success"]},
             "failure_counts": {t: sum(1 for s in sc if s["ticket_id"] == t and not s["success"])
                                for t in sorted({s["ticket_id"] for s in sc if not s["success"]})},

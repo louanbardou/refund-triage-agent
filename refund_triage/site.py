@@ -57,6 +57,7 @@ h2{font-size:clamp(28px,3.6vw,40px);letter-spacing:-.03em;margin:0 0 6px;font-we
 .stp.ai b{background:var(--acc);color:#fff}.stp strong{display:block;font-size:16px}.stp span{color:var(--mute);font-size:13.5px}
 .chips{display:flex;gap:8px;flex-wrap:wrap}.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:13.5px;color:var(--ink2)}
 .lab{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:40px 0 12px}
+.take{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}.take .card{padding:16px 18px;box-shadow:none}.take b{display:block;font-size:15px;margin-bottom:3px}.take span{color:var(--ink2);font-size:13.5px}
 .bento{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:24px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--sh);min-width:0}
 .card.full{grid-column:1/-1}.card h3{margin:0;font-size:16px;font-weight:680}.card .cs{color:var(--mute);font-size:13.5px;margin:2px 0 16px}
@@ -136,7 +137,7 @@ video{width:100%;max-width:960px;border-radius:var(--r);border:1px solid var(--l
 .soon{background:var(--card);border:1px dashed var(--base);border-radius:var(--r);padding:60px;text-align:center;color:var(--mute);max-width:960px}
 pre{background:#0f1623;color:#e6edf3;border-radius:14px;padding:20px 22px;overflow:auto;font:13.5px/1.7 ui-monospace,Menlo,Consolas,monospace;margin:0;max-width:860px}
 ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{margin:6px 0}
-@media (max-width:900px){.tiles{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr 1fr}.bento{grid-template-columns:1fr}.app{grid-template-columns:1fr}.inbox{position:static}.ilist{max-height:260px;min-height:0}.cols{grid-template-columns:1fr}.bar{grid-template-columns:repeat(2,1fr)}.gh{display:none}.tabs{margin-left:6px}}
+@media (max-width:900px){.take{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr 1fr}.bento{grid-template-columns:1fr}.app{grid-template-columns:1fr}.inbox{position:static}.ilist{max-height:260px;min-height:0}.cols{grid-template-columns:1fr}.bar{grid-template-columns:repeat(2,1fr)}.gh{display:none}.tabs{margin-left:6px}}
 </style></head><body>
 <nav><div class="wrap"><div class="logo" onclick="go('overview')"><i></i>Refund Triage</div>
 <div class="tabs" id="tabs"></div><a class="gh" href="__REPO__">GitHub ↗</a></div></nav>
@@ -163,6 +164,7 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
 
 <section class="view" id="v-results">
  <h2>Results</h2><p class="sub" id="rsub"></p>
+ <div class="take" id="take"></div>
  <div class="bento">
   <div class="card"><h3>Task success</h3><div class="cs">Share of tickets passing every check. Whiskers: 95% interval.</div><div id="c-succ"></div></div>
   <div class="card"><h3>Staff time per ticket</h3><div class="cs">Minutes, modelled from assumed step times.</div><div id="c-time"></div></div>
@@ -249,16 +251,22 @@ function drawResults(){
  hbar($('#c-cost'),it(m=>({value:m.cost_per_ticket_usd*1000,text:'$'+(m.cost_per_ticket_usd*1000).toFixed(2),tip:'$'+(m.cost_per_ticket_usd*1000).toFixed(2)+' per 1,000 tickets ($'+m.cost_per_ticket_usd.toFixed(5)+' each)'})),niceMax(cm*1.05),v=>'$'+(Number.isInteger(v)?v:v.toFixed(2)));
  const lm=Math.max(...ORDER.map(s=>S[s].latency_p95_s),.5);
  hbar($('#c-lat'),it(m=>({value:m.latency_mean_s,text:m.latency_mean_s.toFixed(1)+' s',tip:'Mean '+m.latency_mean_s+' s, 95th percentile '+m.latency_p95_s+' s'})),niceMax(lm*1.05),v=>v.toFixed(v%1?1:0)+'s');
- heat();
+ takeaways();heat();
 }
+function takeaways(){const T=$('#take');T.textContent='';const llm=ORDER.filter(s=>s!=='b0_templates');if(!llm.length)return;
+ const ks=llm.map(s=>Math.round(S[s].task_success*S[s].n)),n=S[llm[0]].n,lo=Math.min(...ks),hi=Math.max(...ks);
+ const items=[['Accuracy is at the ceiling','Every model system passes '+(lo===hi?lo:lo+'–'+hi)+' of '+n+' tickets, so these checks cannot rank them.']];
+ if(S.agent&&S.b1_access){items.push(['The gap is staff time','Modelled '+S.agent.staff_minutes_per_ticket.toFixed(1)+' min with the agent vs '+S.b1_access.staff_minutes_per_ticket.toFixed(1)+' min pasting by hand. It rests on an assumed 2.5 min manual lookup.']);
+  items.push(['It costs more and is slower',(S.agent.cost_per_ticket_usd/S.b1_access.cost_per_ticket_usd).toFixed(1)+'× the cost and '+S.agent.latency_mean_s+' s vs '+S.b1_access.latency_mean_s+' s per ticket.'])}
+ items.forEach(([h,t])=>{const c=el('div','card');c.appendChild(el('b','',h));c.appendChild(el('span','',t));T.appendChild(c)})}
 function heat(){const H=$('#heat');H.textContent='';const ids=[...new Set(D.rows.map(r=>r.ticket_id))].sort();H.style.gridTemplateColumns='128px repeat('+ids.length+',1fr)';
  H.appendChild(el('div'));ids.forEach(i=>H.appendChild(el('div','hh',String(+i.slice(1)))));
  ORDER.forEach(s=>{H.appendChild(el('div','hn'+(s==='agent'?' em':''),SHORT[s]));
   ids.forEach(id=>{const r=D.rows.find(x=>x.system===s&&x.ticket_id===id);if(!r){H.appendChild(el('div'));return}const c=el('button','cell '+(r.score.success?'p':'f'),r.score.success?'✓':'✕');
-   tip(c,id+' · '+D.tickets[id].subject+(r.score.success?': all checks passed':': failed '+r.score.failed.map(k=>CHK[k]||k).join(', ')));
+   tip(c,id+' · '+D.tickets[id].subject+(r.score.success?': all checks passed':': failed '+r.score.failed.map(k=>CHK[k]||k).join(', '))+(D.tickets[id].label_note?' · '+D.tickets[id].label_note:''));
    c.onclick=()=>{eng=s;sel=id;go('platform')};H.appendChild(c)})});
- const tb=$('#restable');tb.textContent='';const hr=el('tr');['System','Task success','95% interval','Decision acc.','Wrong-money','Latency mean / p95','Cost / ticket','Staff min'].forEach(h=>hr.appendChild(el('th','',h)));tb.appendChild(hr);
- ORDER.forEach(s=>{const m=S[s],r=el('tr');[NAME[s],pct(m.task_success),pct(m.task_success_ci95[0])+' – '+pct(m.task_success_ci95[1]),pct(m.decision_accuracy),m.wrong_money_decisions,m.latency_mean_s+' / '+m.latency_p95_s+' s','$'+m.cost_per_ticket_usd.toFixed(5),m.staff_minutes_per_ticket.toFixed(2)].forEach(v=>r.appendChild(el('td','',String(v))));tb.appendChild(r)})}
+ const tb=$('#restable');tb.textContent='';const hr=el('tr');['System','Task success','95% interval','Decision acc.','Wrong-money','Reply flags','Latency mean / p95','Cost / ticket','Staff min'].forEach(h=>hr.appendChild(el('th','',h)));tb.appendChild(hr);
+ ORDER.forEach(s=>{const m=S[s],r=el('tr');[NAME[s],pct(m.task_success),pct(m.task_success_ci95[0])+' – '+pct(m.task_success_ci95[1]),pct(m.decision_accuracy),m.wrong_money_decisions,m.reply_flag_tickets,m.latency_mean_s+' / '+m.latency_p95_s+' s','$'+m.cost_per_ticket_usd.toFixed(5),m.staff_minutes_per_ticket.toFixed(2)].forEach(v=>r.appendChild(el('td','',String(v))));tb.appendChild(r)})}
 
 let eng=S.agent?'agent':ORDER[0],sel=null,filter='all',timer=null,typer=null;
 const status={},processed={},edited={};
@@ -313,7 +321,7 @@ function renderTicket(){const r=rowsOf().find(x=>x.ticket_id===sel);if(!r)return
   const st0=status[key()];if(st0){primary.disabled=true;alt.disabled=true;a.appendChild(el('span','hint',st0==='sent'?'Sent (simulation).':'Sent to manager (simulation).'))}
   primary.onclick=()=>act(esc?'escalated':'sent',ta,full);alt.onclick=()=>act(esc?'sent':'escalated',ta,full);a.appendChild(primary);a.appendChild(alt);drf.appendChild(a);
   drf.appendChild(el('div','hint','Nothing is really sent. Keys: J / K move between tickets.'));
-  if($('#evaltog').checked){const e=el('div','evalbox');e.appendChild(el('div','','Evaluation label: expected '+(DEC[t.expected.decision]||t.expected.decision)+' · rules '+t.expected.rules.join(', ')));Object.entries(r.score.checks).forEach(([k,v])=>e.appendChild(el('span','ck'+(v?'':' f'),(v?'✓ ':'✕ ')+(CHK[k]||k))));drf.appendChild(e)}}
+  if($('#evaltog').checked){const e=el('div','evalbox');e.appendChild(el('div','','Evaluation label: expected '+(DEC[t.expected.decision]||t.expected.decision)+' · rules '+t.expected.rules.join(', ')));if(t.label_note)e.appendChild(el('div','',t.label_note));if((r.reply_flags||[]).length)e.appendChild(el('div','','Reply flags: '+r.reply_flags.join(', ')));Object.entries(r.score.checks).forEach(([k,v])=>e.appendChild(el('span','ck'+(v?'':' f'),(v?'✓ ':'✕ ')+(CHK[k]||k))));drf.appendChild(e)}}
  function skeleton(){rec.appendChild(el('h4','','Recommendation'));[60,90,40].forEach(w=>{const s=el('div','skel');s.style.width=w+'%';rec.appendChild(s)});drf.appendChild(el('h4','','Draft reply'));[100,95,90,60].forEach(w=>{const s=el('div','skel');s.style.width=w+'%';drf.appendChild(s)})}
  if(done){reveal(true)}else{skeleton();let i=0;nodes[0].className='ts run';timer=setInterval(()=>{nodes[i].className='ts ok';nodes[i].firstChild.textContent='✓';i++;if(i<nodes.length){nodes[i].className='ts run'}else{clearInterval(timer);processed[key()]=true;inbox();reveal(false)}},330)}}
 function act(kind,ta,orig){const k=key();status[k]=kind;edited[k]=ta.value.trim()!==orig.trim();

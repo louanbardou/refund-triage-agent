@@ -6,7 +6,7 @@ only record a choice in the browser (localStorage); nothing is ever sent.
 """
 import json
 
-from .scoring import score
+from .scoring import quality_flags, score
 
 _PAGE = r"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -121,7 +121,7 @@ def build_data(tickets: list, records: list, summary: dict) -> dict:
         rows.append({"ticket_id": r["ticket_id"], "system": r["system"], "result": r["result"],
                      "tool_calls": r["tool_calls"], "guardrail_notes": r["guardrail_notes"],
                      "reflection": r.get("reflection"), "latency_s": r["latency_s"], "usage": r["usage"],
-                     "score": score(by_id[r["ticket_id"]], r)})
+                     "score": score(by_id[r["ticket_id"]], r), "reply_flags": quality_flags(by_id[r["ticket_id"]], r)})
     systems = [s for s in summary if not s.startswith("_") and s != "manual"]
     return {"tickets": by_id, "rows": rows, "summary": summary, "systems": systems}
 

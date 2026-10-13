@@ -136,3 +136,25 @@ class RealRepliesFromFirstLiveRun(unittest.TestCase):
     def test_escalation_may_show_amount_at_stake(self):  # T02
         r = rec("T02", refund_amount=145.0, draft_reply="Hello Marc, thank you, we will help you. Your request has been passed to a manager. Kind regards")
         self.assertTrue(score(T["T02"], r)["checks"]["amount_ok"])
+
+
+class ReplyQualityFlagsAndP95(unittest.TestCase):
+    def test_flags_from_independent_review(self):
+        from refund_triage.scoring import quality_flags
+        r = rec("T09", draft_reply="Hello, we have cancelled the order and will refund 45.00 EUR. Please return it in its original packaging. We will help you.")
+        self.assertEqual(sorted(quality_flags(T["T09"], r)), ["completed_action", "invented_condition"])
+
+    def test_identity_disclosure_only_on_r8_tickets(self):
+        from refund_triage.scoring import quality_flags
+        r13 = rec("T13", draft_reply="The email you wrote from does not match the email used on the order. Please send it. We will help you.")
+        self.assertEqual(quality_flags(T["T13"], r13), ["identity_disclosure"])
+        r01 = rec("T01", draft_reply="Your name does not match anything we know, but we will help you.")
+        self.assertEqual(quality_flags(T["T01"], r01), [])
+
+    def test_flags_never_change_success(self):
+        r = rec("T01", draft_reply="Hello Anna, thank you, we will help you. We can refund 59.00 EUR. Please use the original packaging. Regards")
+        self.assertTrue(score(T["T01"], r)["success"])
+
+    def test_p95_interpolates(self):
+        from refund_triage.scoring import _p95
+        self.assertAlmostEqual(_p95(list(range(1, 32))), 29.5, places=6)  # 31 values: k = 28.5

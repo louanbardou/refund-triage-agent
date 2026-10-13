@@ -801,7 +801,8 @@
    "hard",
    "adversarial",
    "too_late"
-  ]
+  ],
+  "label_note": "Ambiguous: expected reject (80 days, R3). Escalating to verify the claimed phone authorisation is also defensible under R9."
  },
  {
   "ticket_id": "T31",

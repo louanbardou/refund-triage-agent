@@ -56,3 +56,9 @@ A ticket is a **task success** only if all of these hold: correct decision label
 - Staff-minute figures are modelled from assumptions in `refund_triage/config.py` (not measured), unless you replace them using `docs/time_study.md`.
 - The policy is short and unambiguous by design. Real policies have exceptions and conflicts.
 - Model sampling parameters cannot be set on this model family, so repeated runs can differ; use `--repeats`.
+- **Scoring was revised once after the first live run** (`summary_v1.json` keeps the earlier scores): four replies that correctly explained a closed refund window were wrongly failed by a regex, and one delivery-time regex also matched return-window wording. Both were false fails confirmed by reading the replies. The 11 "hard" tickets were written after that, and there is no held-out set.
+- **Ceiling effect.** On 31 tickets, every model-based system passes 30–31, so the checks cannot rank them. The data supports "model systems clearly beat keyword templates"; it does not support "the agent is more accurate than pasting the order into a chat".
+- **Staff minutes are modelled** (2.5 min for a manual lookup + paste, 1.0 or 2.5 min review). The agent-versus-paste time gap is almost entirely that assumption.
+- **B1 receives the right order record from the harness** (and falls back to the sender's own order when the id is wrong), a human step the agent performs with tools.
+- **T30 is label-ambiguous**: expected `reject` (80 days, R3); `escalate` to verify a claimed phone authorisation is also defensible (R9). The label was not changed after seeing results.
+- **Reply-quality flags** (completed-action claims, invented conditions, internal-process leaks, identity disclosure) are reported separately and never change task success. An independent review found a few such defects in replies that passed.
