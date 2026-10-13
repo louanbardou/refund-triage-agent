@@ -218,6 +218,7 @@ ol.how{margin:0;padding-left:18px;color:var(--ink2);font-size:17.5px;line-height
 .offer>div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh)}
 .offer b{display:block;font-size:14.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}.offer span{color:var(--ink);font-size:18px;line-height:1.5}
 @media (max-width:900px){.offer{grid-template-columns:1fr}}
+.lv{display:block;width:100%;max-width:880px;margin:0 0 28px;border-radius:var(--r);border:1px solid var(--line);box-shadow:var(--sh);background:#000}
 </style></head><body>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <nav><div class="wrap"><div class="logo" onclick="go('overview')"><svg class="mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a7cff"/><stop offset="1" stop-color="#3b82e6"/></linearGradient></defs><circle cx="16" cy="16" r="16" fill="url(#lg)"/><rect x="6.8" y="10.6" width="17.4" height="12" rx="2.4" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M7.6 11.9l7.9 5.6 7.9-5.6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23.6" cy="22.6" r="5.3" fill="#1a9e62" stroke="#fff" stroke-width="1.6"/><path d="M21.2 22.7l1.8 1.8 3.2-3.5" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Refund Triage</div>
@@ -231,6 +232,7 @@ ol.how{margin:0;padding-left:18px;color:var(--ink2);font-size:17.5px;line-height
   <p class="sub">Customers email to return, cancel or get a refund. The agent finds the order, applies your returns policy and drafts the reply in their language. You review and approve with one key.</p>
   <div class="btns"><button class="btn p" onclick="go('platform')">Open the platform →</button><button class="btn" onclick="go('results')">See the results</button></div>
  </div>
+ __LANDING__
  <div class="tiles" id="tiles"></div>
  <div class="lab">How it works</div>
  <div class="steps">
@@ -601,7 +603,7 @@ def scale_stats(run: Path) -> dict:
             "scenarios": [dict(tag=k, **v) for k, v in sorted(scen.items(), key=lambda kv: kv[0])]}
 
 
-def build(run: Path, out: Path, video: Path | None, repeat: Path | None = None, scale: Path | None = None) -> None:
+def build(run: Path, out: Path, video: Path | None, repeat: Path | None = None, scale: Path | None = None, landing: Path | None = None) -> None:
     summary = json.loads((run / "summary.json").read_text())
     records = [json.loads(line) for line in (run / "records.jsonl").read_text().splitlines()]
     data = build_data(load_tickets(), records, summary)
@@ -621,8 +623,13 @@ def build(run: Path, out: Path, video: Path | None, repeat: Path | None = None, 
         vhtml = f'<video controls preload="metadata" src="demo.mp4"{poster}></video>'
     else:
         vhtml = '<div class="soon">The demo video will be added here.</div>'
+    lhtml = ""
+    if landing and landing.exists():
+        shutil.copy(landing, out / "intro.mp4")
+        lp = ' poster="poster_landing.jpg"' if (out / "poster_landing.jpg").exists() else ""
+        lhtml = f'<video class="lv" controls preload="metadata" src="intro.mp4"{lp}></video>'
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
-    html = PAGE.replace("__REPO__", REPO).replace("__VIDEO__", vhtml).replace("__DATA__", payload)
+    html = PAGE.replace("__LANDING__", lhtml).replace("__REPO__", REPO).replace("__VIDEO__", vhtml).replace("__DATA__", payload)
     (out / "index.html").write_text(html)
     (out / ".nojekyll").write_text("")
 
@@ -633,9 +640,10 @@ def main():
     ap.add_argument("--out", default=str(ROOT / "docs"))
     ap.add_argument("--video", default="")
     ap.add_argument("--repeat", default="", help="a results/<run> made with --repeats, for the stability note")
+    ap.add_argument("--landing-video", default="")
     ap.add_argument("--scale", default="", help="a finished results/<run> on the generated scale set")
     a = ap.parse_args()
-    build(Path(a.run), Path(a.out), Path(a.video) if a.video else None, Path(a.repeat) if a.repeat else None, Path(a.scale) if a.scale else None)
+    build(Path(a.run), Path(a.out), Path(a.video) if a.video else None, Path(a.repeat) if a.repeat else None, Path(a.scale) if a.scale else None, Path(a.landing_video) if a.landing_video else None)
     print(f"site written to {a.out}")
 
 
