@@ -265,10 +265,11 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
  <div class="lab">Problems we ran into</div>
  <ol class="tline">
   <li><span class="n">1</span><div><b>Good replies were marked wrong</b><div class="p">Our first regex scoring failed correct replies.</div><div class="f">→ Fixed after reading each reply. The first scores are kept.</div></div></li>
-  <li><span class="n">2</span><div><b>The test was too easy</b><div class="p">Every model system scored 100% on the first 20 tickets.</div><div class="f">→ Added 11 harder tickets and a generated 500-ticket scale test.</div></div></li>
+  <li><span class="n">2</span><div><b>The test was too easy</b><div class="p">Every model system scored 100% on the first 20 tickets.</div><div class="f">→ Added 11 harder tickets and a 500-ticket generated scale test.</div></div></li>
   <li><span class="n">3</span><div><b>A reviewer found what we missed</b><div class="p">A wrong p95 latency, an invented "original packaging", a "we have cancelled" claim.</div><div class="f">→ Fixed the latency maths and added reply-quality flags.</div></div></li>
   <li><span class="n">4</span><div><b>One label is ambiguous</b><div class="p">Ticket T30, a claimed phone authorisation: reject or escalate?</div><div class="f">→ Kept the original label and said so.</div></div></li>
   <li><span class="n">5</span><div><b>The cost chart told half the story</b><div class="p">Counting tokens only made the agent look more expensive.</div><div class="f">→ Added the all-in cost with staff time at an assumed $25/h. Token cost stays visible.</div></div></li>
+  <li><span class="n">7</span><div><b>Scale exposed two ambiguities</b><div class="p">Policy R7 says "refund" and does not say if a store credit above 100 € counts; our generated emails also named two items in one phrase.</div><div class="f">→ Reported as ambiguities, not hidden. Clarifying R7 is the first fix for a pilot.</div></div></li>
   <li><span class="n">6</span><div><b>The first platform needed scrolling</b><div class="p">Too slow for reviewing tickets in a row.</div><div class="f">→ One-screen layout, automatic checks, undo and keyboard keys.</div></div></li>
  </ol>
  <div class="lab">What we learned</div>
@@ -349,6 +350,7 @@ function scaleCard(){const sc=D.scale,h=$('#scale-h'),sub=$('#scale-s'),box=$('#
  const nm={b0_templates:'B0 templates',b1_access:'B1 paste',agent:'Agent + check'},ord=['b0_templates','b1_access','agent'].filter(k=>sc.systems[k]);
  hbar(box,ord.map(k=>{const d=sc.systems[k];return {label:nm[k],color:k==='agent'?GREEN:GRAY,em:k==='agent',value:d.k/d.n,lo:d.ci95[0],hi:d.ci95[1],text:pct(d.k/d.n),tip:d.k+' of '+d.n+' tickets passed every check'}}),1,v=>Math.round(v*100)+'%');
  const bad=sc.scenarios.filter(r=>(r.agent!==undefined&&r.agent<r.n)||(r.b1_access!==undefined&&r.b1_access<r.n)).sort((a,b)=>(a.agent-a.n)-(b.agent-b.n)).slice(0,6);
+ const m=sc.agent_misses;if(m&&m.total){const q=el('p','note','Agent misses: '+m.total+' of '+sc.n+'. '+m.multi_item+' are multi-item emails that name both items in one phrase (in '+m.multi_item_asked+' the agent asked which item, in '+(m.multi_item-m.multi_item_asked)+' it answered for one item); '+m.store_credit_over_100+' are store-credit cases above 100 € where policy R7 does not say if it applies (the agent escalated); '+m.other+' other. The labels were not changed after seeing this.');q.style.marginTop='14px';ex.appendChild(q)}
  if(bad.length){const t=el('table');t.style.minWidth='0';const hr=el('tr');['Scenario with misses','Tickets','Agent','B1 paste'].forEach(x=>hr.appendChild(el('th','',x)));t.appendChild(hr);
   bad.forEach(r=>{const q=el('tr');[r.tag.replace(/_/g,' '),r.n,r.agent+'/'+r.n,r.b1_access+'/'+r.n].forEach(v=>q.appendChild(el('td','',String(v))));t.appendChild(q)});const w=el('div','tw');w.appendChild(t);ex.appendChild(w)}
  else ex.appendChild(el('div','note','No misses for the agent or B1 in any scenario.'))}
@@ -506,8 +508,26 @@ def scale_stats(run: Path) -> dict:
         if r["system"] == "agent":
             t = tickets[r["ticket_id"]]
             l = langs.setdefault(t["language"], [0, 0]); l[0] += score(t, r)["success"]; l[1] += 1
+    miss = {"multi_item": 0, "multi_item_asked": 0, "store_credit_over_100": 0, "other": 0, "total": 0}
+    for r in recs:
+        if r["system"] != "agent":
+            continue
+        t = tickets[r["ticket_id"]]
+        sc = score(t, r)
+        if sc["success"]:
+            continue
+        miss["total"] += 1
+        price = sum(i["price"] for i in __import__("refund_triage.data", fromlist=["load_orders"]).load_orders()[t["facts"]["order_id"]]["items"]
+                    if i["sku"] == t["facts"].get("sku")) if t["facts"].get("sku") else 0
+        if t["tags"][0] == "multi_item_return" and "decision_ok" in sc["failed"]:
+            miss["multi_item"] += 1
+            miss["multi_item_asked"] += r["result"]["decision"] == "ask_info"
+        elif t["expected"]["decision"] == "store_credit" and r["result"]["decision"] == "escalate" and price > 100:
+            miss["store_credit_over_100"] += 1
+        else:
+            miss["other"] += 1
     evaluated = len({r["ticket_id"] for r in recs})   # tickets actually run, not tickets generated
-    return {"n": evaluated, "generated": len(tickets), "systems": systems, "languages": langs,
+    return {"n": evaluated, "generated": len(tickets), "systems": systems, "languages": langs, "agent_misses": miss,
             "scenarios": [dict(tag=k, **v) for k, v in sorted(scen.items(), key=lambda kv: kv[0])]}
 
 
