@@ -200,6 +200,7 @@ ol.how{margin:0;padding-left:18px;color:var(--ink2);font-size:17.5px;line-height
 .offer>div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh)}
 .offer b{display:block;font-size:14.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}.offer span{color:var(--ink);font-size:18px;line-height:1.5}
 @media (max-width:900px){.offer{grid-template-columns:1fr}}
+.lvw{position:relative;max-width:1000px;margin:0 0 28px}.lvw .lv{margin:0}.snd{position:absolute;right:14px;top:14px;border:0;background:rgba(0,0,0,.65);color:#fff;font-weight:700;font-size:15px;padding:9px 15px;border-radius:99px;cursor:pointer;backdrop-filter:blur(6px)}
 .lv{display:block;width:100%;max-width:1000px;margin:0 0 28px;border-radius:var(--r);border:1px solid var(--line);box-shadow:var(--sh);background:#000}
 </style></head><body>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -214,7 +215,7 @@ ol.how{margin:0;padding-left:18px;color:var(--ink2);font-size:17.5px;line-height
   <p class="sub">Customers email to return, cancel or get a refund. The agent finds the order, applies your returns policy and drafts the reply in their language. You review and approve with one key.</p>
   <div class="btns"><button class="btn p" onclick="go('platform')">Open the platform →</button><button class="btn" onclick="go('results')">See the results</button></div>
  </div>
- <video class="lv" controls preload="metadata" src="intro.mp4" poster="poster_landing.jpg"></video>
+ <div class="lvw"><video class="lv" id="lv" controls autoplay muted loop playsinline preload="auto" src="intro.mp4" poster="poster_landing.jpg"></video><button class="snd" id="snd" type="button">🔊 Sound on</button></div>
  <div class="tiles" id="tiles"></div>
  <div class="lab">How it works</div>
  <div class="steps">
@@ -303,7 +304,7 @@ let tt;function toast(m,a,fn){const t=$('#toast');t.textContent=m;if(a){const b=
 
 const VIEWS=[['overview','Overview'],['results','Results'],['platform','Platform'],['video','Video'],['about','The project'],['run','Run it']];
 const tabs=$('#tabs');VIEWS.forEach(([k,l])=>{const b=el('button','tab',l);b.id='tab-'+k;b.onclick=()=>go(k);tabs.appendChild(b)});
-function go(k){if(!VIEWS.find(v=>v[0]===k))k='overview';VIEWS.forEach(([v])=>{$('#v-'+v).classList.toggle('on',v===k);$('#tab-'+v).classList.toggle('on',v===k)});history.replaceState(null,'','#'+k);scrollTo({top:0});if(k==='platform')renderPlatform();if(k==='results')drawResults();if(k==='about')drawAbout()}
+function go(k){if(!VIEWS.find(v=>v[0]===k))k='overview';VIEWS.forEach(([v])=>{$('#v-'+v).classList.toggle('on',v===k);$('#tab-'+v).classList.toggle('on',v===k)});history.replaceState(null,'','#'+k);{const lv=document.getElementById('lv');if(lv){if(k==='overview'){const p=lv.play();if(p&&p.catch)p.catch(()=>{})}else lv.pause()}}scrollTo({top:0});if(k==='platform')renderPlatform();if(k==='results')drawResults();if(k==='about')drawAbout()}
 function parseHash(){const p=location.hash.slice(1).split('&'),o={};p.slice(1).forEach(x=>{const [a,b]=x.split('=');o[a]=b});return [p[0],o]}
 addEventListener('hashchange',()=>boot());
 
@@ -497,7 +498,12 @@ addEventListener('keydown',e=>{if(!$('#v-platform').classList.contains('on'))ret
  if(e.key==='Enter'){const b=document.querySelector('.acts .go');if(b&&!b.disabled){e.preventDefault();b.click()}}
  if(e.key==='a'||e.key==='e'){const b=[...document.querySelectorAll('.acts .go,.acts .sec')].filter(b=>!b.disabled).find(b=>b.textContent.endsWith(e.key.toUpperCase()));if(b)b.click()}});
 
+function lvInit(){const v=document.getElementById('lv'),b=document.getElementById('snd');if(!v)return;
+ b.onclick=()=>{v.muted=false;v.currentTime=0;v.play();b.style.display='none'};v.addEventListener('volumechange',()=>{if(!v.muted)b.style.display='none'});
+ const pl=()=>{const p=v.play();if(p&&p.catch)p.catch(()=>{})};pl();
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&document.getElementById('v-overview').classList.contains('on'))pl()})}
 function boot(){const [k,o]=parseHash();if(o.e&&S[o.e])eng=o.e;if(o.t)sel=o.t;if(o.f)filter=o.f;if(o.clean)document.body.classList.add('clean');if(o.z)document.body.style.zoom=o.z;if(o.anim==='0')ANIM=false;go(k||'overview');if(o.sc)setTimeout(()=>{const t=document.getElementById(o.sc);if(t)t.scrollIntoView({block:'start'})},60)}
+lvInit();
 const SELFTEST=location.hash.includes('selftest'),CHAIN=location.hash.includes('chain');
 boot();
 if(CHAIN){window.__ms=[];const _m=milestone;milestone=function(m){window.__ms.push(m);_m(m)};const t0=performance.now();
