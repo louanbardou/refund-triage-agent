@@ -198,6 +198,10 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
 .tline .n{width:30px;height:30px;border-radius:50%;background:var(--acc-soft);color:var(--acc);display:grid;place-items:center;font-weight:750;font-size:13px}
 .tline b{display:block;font-size:15px}.tline .p{color:var(--ink2);font-size:13.5px}.tline .f{color:#13804e;font-size:13.5px;font-weight:600;margin-top:2px}
 @media (max-width:900px){.team{grid-template-columns:1fr 1fr}.why{grid-template-columns:1fr}}
+.abt{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}.abt .card{padding:20px 22px}.abt p{color:var(--ink2);font-size:14.5px;line-height:1.65;margin:0}
+ol.how{margin:0;padding-left:18px;color:var(--ink2);font-size:14.5px;line-height:1.6}ol.how li{margin:0 0 6px}ol.how b{color:var(--ink)}
+.lc svg{width:100%;height:auto;display:block}.lc text{font:12px system-ui,sans-serif;fill:#898781}.lc .lb{font-weight:700;fill:#0b0b0b}
+@media (max-width:900px){.abt{grid-template-columns:1fr}}
 </style></head><body>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <nav><div class="wrap"><div class="logo" onclick="go('overview')"><svg class="mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a7cff"/><stop offset="1" stop-color="#3b82e6"/></linearGradient></defs><circle cx="16" cy="16" r="16" fill="url(#lg)"/><rect x="6.8" y="10.6" width="17.4" height="12" rx="2.4" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M7.6 11.9l7.9 5.6 7.9-5.6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23.6" cy="22.6" r="5.3" fill="#1a9e62" stroke="#fff" stroke-width="1.6"/><path d="M21.2 22.7l1.8 1.8 3.2-3.5" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Refund Triage</div>
@@ -248,24 +252,21 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
 <section class="view" id="v-video"><h2>Demo video</h2>__VIDEO__</section>
 
 <section class="view" id="v-about">
- <h2>The story</h2><p class="sub">Louan Bardou · MSc Data Science and AI for Business, HEC Paris · sole author</p>
- <div class="lab">The problem</div>
- <div class="card" style="max-width:820px"><span style="color:var(--ink2);font-size:15px;line-height:1.65">A small shop answers return, cancellation and refund emails by hand. Each one needs the order, a policy whose rules depend on dates, and a reply in the customer's language. The slow part is the lookup, not the writing. In class the example was hotel emails; I picked a workflow where an agent has a real lookup to do, a clear right answer, and money that a person has to sign off.</span></div>
- <div class="lab">What I built</div>
- <div class="card" style="max-width:820px"><span style="color:var(--ink2);font-size:15px;line-height:1.65">An agent that reads the email, looks up the order with read-only tools, applies the written policy and drafts the reply. A staff member reviews and approves. I compared it with keyword templates and with pasting the order into a chat model, first on 31 tickets I wrote and then on 500 generated ones.</span></div>
- <div class="lab">What went wrong along the way</div>
- <ol class="tline">
-  <li><span class="n">1</span><div><b>My scoring failed good replies</b><div class="p">The first regex checks marked correct replies as wrong.</div><div class="f">→ I read each reply, fixed the checks and kept the first scores.</div></div></li>
-  <li><span class="n">2</span><div><b>The first test was too easy</b><div class="p">Every model system scored 100% on my first 20 tickets.</div><div class="f">→ I added 11 harder tickets, then a 500-ticket generated scale test.</div></div></li>
-  <li><span class="n">3</span><div><b>An independent review found what I missed</b><div class="p">A wrong p95 latency, an invented "original packaging", a "we have cancelled" claim.</div><div class="f">→ I fixed the latency maths and added reply-quality flags.</div></div></li>
-  <li><span class="n">4</span><div><b>One label is ambiguous</b><div class="p">Ticket T30, a claimed phone authorisation: reject or escalate?</div><div class="f">→ I kept the original label and said so.</div></div></li>
-  <li><span class="n">5</span><div><b>The cost chart told half the story</b><div class="p">Counting tokens only made the agent look more expensive.</div><div class="f">→ I added the all-in cost, with staff time at an assumed $25/h. Token cost stays visible.</div></div></li>
-  <li><span class="n">6</span><div><b>The first platform needed scrolling</b><div class="p">Too slow for reviewing tickets in a row.</div><div class="f">→ One screen, automatic checks, undo and keyboard keys.</div></div></li>
-  <li><span class="n">7</span><div><b>Scale exposed two ambiguities</b><div class="p">Policy R7 says "refund" and does not say if a store credit above 100 € counts; my generated emails also named two items in one phrase.</div><div class="f">→ I report them as ambiguities. Clarifying R7 is the first fix for a pilot.</div></div></li>
- </ol>
- <div class="lab">What I take away</div>
- <div class="chips"><span class="chip">Accuracy did not separate the systems; staff time and wording did</span><span class="chip">Numbers that rest on assumptions say so</span><span class="chip">An independent review beats a self-review</span></div>
- <p class="note" style="color:var(--mute);font-size:13.5px;margin:18px 0 0">Built with Claude Code, as the course allows. The model inside the agent is Claude Haiku 5.5.</p>
+ <h2>The project</h2><p class="sub">Louan Bardou · MSc Data Science and AI for Business, HEC Paris</p>
+ <div class="abt">
+  <div class="card"><div class="lab" style="margin-top:0">The problem</div><p>A small online shop answers return, cancellation and refund emails by hand. For each one, someone has to find the order, check a written policy whose rules depend on dates (day 30 is eligible, day 31 is not; a refund above 100 € needs a manager) and write the reply in the customer's language. The lookup is the slow part, and a wrong "yes" costs money.</p></div>
+  <div class="card"><div class="lab" style="margin-top:0">The solution</div><p>An agent does the lookup and the first draft. It reads the email, finds the order with read-only tools, applies the nine policy rules and writes the reply. Every draft goes to a staff member who approves, edits or escalates it. Nothing is sent automatically, and anything above 100 € goes to a manager.</p></div>
+  <div class="card"><div class="lab" style="margin-top:0">How it works</div><ol class="how">
+   <li><b>Read</b> the email, in any language.</li>
+   <li><b>Look up</b> the order, only if it belongs to the sender; day counts are computed by code.</li>
+   <li><b>Decide</b>: approve, store credit, reject, ask for information or escalate, citing the rule.</li>
+   <li><b>Check</b> the draft against the facts.</li>
+   <li><b>Review</b>: a person approves with one key, edits, or escalates.</li></ol></div>
+ </div>
+ <div class="bento">
+  <div class="card"><h3>Staff hours as tickets pile up</h3><div class="cs">Cumulative hours of staff time. Modelled from assumed step times, not measured.</div><div id="lc-time"></div></div>
+  <div class="card"><h3>Pass rate as the tickets are processed</h3><div class="cs">Running share of tickets passing every check, over the 500-ticket scale test. Measured. The axis is zoomed on the top of the range; keyword templates (3%) are off the scale.</div><div id="lc-rate"></div></div>
+ </div>
 </section>
 
 <section class="view" id="v-run">
@@ -304,9 +305,9 @@ const tipEl=el('div','tip');document.body.appendChild(tipEl);
 function tip(n,t){n.addEventListener('mousemove',e=>{tipEl.textContent=t;tipEl.style.display='block';tipEl.style.left=Math.min(e.clientX+14,innerWidth-270)+'px';tipEl.style.top=(e.clientY+16)+'px'});n.addEventListener('mouseleave',()=>tipEl.style.display='none');n.setAttribute('aria-label',t)}
 let tt;function toast(m,a,fn){const t=$('#toast');t.textContent=m;if(a){const b=el('button','tbtn',a);b.onclick=()=>{fn();t.classList.remove('on')};t.appendChild(b)}t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),a?5000:2200)}
 
-const VIEWS=[['overview','Overview'],['results','Results'],['platform','Platform'],['video','Video'],['about','The story'],['run','Run it']];
+const VIEWS=[['overview','Overview'],['results','Results'],['platform','Platform'],['video','Video'],['about','The project'],['run','Run it']];
 const tabs=$('#tabs');VIEWS.forEach(([k,l])=>{const b=el('button','tab',l);b.id='tab-'+k;b.onclick=()=>go(k);tabs.appendChild(b)});
-function go(k){if(!VIEWS.find(v=>v[0]===k))k='overview';VIEWS.forEach(([v])=>{$('#v-'+v).classList.toggle('on',v===k);$('#tab-'+v).classList.toggle('on',v===k)});history.replaceState(null,'','#'+k);scrollTo({top:0});if(k==='platform')renderPlatform();if(k==='results')drawResults()}
+function go(k){if(!VIEWS.find(v=>v[0]===k))k='overview';VIEWS.forEach(([v])=>{$('#v-'+v).classList.toggle('on',v===k);$('#tab-'+v).classList.toggle('on',v===k)});history.replaceState(null,'','#'+k);scrollTo({top:0});if(k==='platform')renderPlatform();if(k==='results')drawResults();if(k==='about')drawAbout()}
 function parseHash(){const p=location.hash.slice(1).split('&'),o={};p.slice(1).forEach(x=>{const [a,b]=x.split('=');o[a]=b});return [p[0],o]}
 addEventListener('hashchange',()=>boot());
 
@@ -336,6 +337,37 @@ function drawResults(){
  hbar($('#c-lat'),it(m=>({value:m.latency_mean_s,text:m.latency_mean_s.toFixed(1)+' s',tip:'Mean '+m.latency_mean_s+' s, 95th percentile '+m.latency_p95_s+' s'})),niceMax(lm*1.05),v=>v.toFixed(v%1?1:0)+'s');
  takeaways();scaleCard();heat();
 }
+const NS='http://www.w3.org/2000/svg';
+function lineChart(host,series,o){host.textContent='';host.classList.add('lc');const W=640,H=o.h||290,m={l:50,r:118,t:14,b:36};
+ const X=x=>m.l+(x-o.x0)/(o.x1-o.x0)*(W-m.l-m.r),Y=y=>H-m.b-(y-o.y0)/(o.y1-o.y0)*(H-m.t-m.b);
+ const svg=document.createElementNS(NS,'svg');svg.setAttribute('viewBox','0 0 '+W+' '+H);
+ const mk=(t,a,tx)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(tx!==undefined)e.textContent=tx;svg.appendChild(e);return e};
+ const yt=o.yt||4;for(let i=0;i<=yt;i++){const v=o.y0+(o.y1-o.y0)*i/yt,y=Y(v);mk('line',{x1:m.l,x2:W-m.r,y1:y,y2:y,stroke:i?'#e1e0d9':'#c3c2b7'});mk('text',{x:m.l-8,y:y+4,'text-anchor':'end'},o.fy(v))}
+ for(let i=0;i<=o.xt;i++){const v=o.x0+(o.x1-o.x0)*i/o.xt;mk('text',{x:X(v),y:H-m.b+18,'text-anchor':'middle'},Math.round(v))}
+ mk('text',{x:(m.l+W-m.r)/2,y:H-2,'text-anchor':'middle'},o.xl);
+ series.forEach(sr=>{const d=sr.pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join(' ');
+  mk('path',{d,fill:'none',stroke:sr.color,'stroke-width':sr.w||2.5,'stroke-linecap':'round','stroke-linejoin':'round'});
+  const e=sr.pts[sr.pts.length-1];mk('circle',{cx:X(e[0]),cy:Y(e[1]),r:4.5,fill:sr.color,stroke:'#fff','stroke-width':2});
+  mk('text',{x:X(e[0])+10,y:Y(e[1])+4,class:'lb'},sr.name+' '+o.fy(e[1]))});
+ const vl=mk('line',{y1:m.t,y2:H-m.b,stroke:'#52514e','stroke-width':1,opacity:0}),hit=mk('rect',{x:m.l,y:m.t,width:W-m.l-m.r,height:H-m.t-m.b,fill:'transparent'});
+ hit.addEventListener('mousemove',ev=>{const r=svg.getBoundingClientRect(),px=(ev.clientX-r.left)/r.width*W,xv=o.x0+(px-m.l)/(W-m.l-m.r)*(o.x1-o.x0);
+  const rows=series.map(sr=>{let b=sr.pts[0];sr.pts.forEach(p=>{if(Math.abs(p[0]-xv)<Math.abs(b[0]-xv))b=p});return [sr.name,b]});
+  vl.setAttribute('x1',X(rows[0][1][0]));vl.setAttribute('x2',X(rows[0][1][0]));vl.setAttribute('opacity',1);
+  tipEl.textContent=o.xn+' '+rows[0][1][0]+': '+rows.map(([n,b])=>n+' '+o.fy(b[1])).join(' · ');tipEl.style.display='block';tipEl.style.left=Math.min(ev.clientX+14,innerWidth-300)+'px';tipEl.style.top=(ev.clientY+16)+'px'});
+ hit.addEventListener('mouseleave',()=>{vl.setAttribute('opacity',0);tipEl.style.display='none'});host.appendChild(svg)}
+function drawAbout(){
+ const mins=k=>S[k].staff_minutes_per_ticket,xs=[0,100,200,300,400,500],hrs=(mn)=>xs.map(x=>[x,x*mn/60]);
+ const ser=[{name:'Manual',color:'#52514e',pts:hrs(S.manual.staff_minutes_per_ticket)}];
+ if(S.b1_access)ser.push({name:'Paste',color:'#8f8d84',pts:hrs(mins('b1_access'))});
+ if(S.agent)ser.push({name:'Agent',color:GREEN,pts:hrs(mins('agent')),w:3});
+ const top=Math.max(...ser.map(q=>q.pts[q.pts.length-1][1]));
+ const y1=Math.ceil(top/10)*10;lineChart($('#lc-time'),ser,{x0:0,x1:500,y0:0,y1,yt:y1/10,xt:5,fy:v=>(Number.isInteger(v)?v:v.toFixed(1))+' h',xl:'Tickets handled',xn:'After'});
+ const cv=D.scale&&D.scale.curve;const host=$('#lc-rate');
+ if(!cv){host.textContent='The scale-test curve appears here once the 500-ticket run is attached.';return}
+ const nm={agent:['Agent',GREEN,3],b1_access:['Paste','#8f8d84',2.5]},out=[];
+ ['b1_access','agent'].forEach(k=>{if(cv[k])out.push({name:nm[k][0],color:nm[k][1],w:nm[k][2],pts:cv[k].filter(p=>p[0]>=10)})});
+ const lo=Math.min(...out.flatMap(q=>q.pts.map(p=>p[1]))),y0=Math.floor(lo*40)/40;
+ lineChart(host,out,{x0:0,x1:D.scale.n,y0,y1:1,yt:Math.round((1-y0)/.025),xt:5,fy:v=>(Math.round(v*1000)/10)+'%',xl:'Tickets processed',xn:'After'})}
 function scaleCard(){const sc=D.scale,h=$('#scale-h'),sub=$('#scale-s'),box=$('#c-scale'),ex=$('#scale-extra');box.textContent='';ex.textContent='';
  if(!sc){h.textContent='Scale test · '+D.scale_planned+' generated tickets';sub.textContent='Four languages, every policy rule and every boundary day. Running now: results appear here as soon as the run is finished and checked.';return}
  h.textContent='Scale test · '+sc.n+' generated tickets';sub.textContent='Labels from the rule-based oracle; four languages, all rules, boundary days. Whiskers: 95% interval.';
@@ -480,10 +512,11 @@ def scale_stats(run: Path) -> dict:
     tickets = {t["ticket_id"]: t for t in load_tickets(scale=True)}
     recs = [json.loads(line) for line in (run / "records.jsonl").read_text().splitlines()]
     sm = json.loads((run / "summary.json").read_text())
-    systems, scen = {}, {}
+    systems, scen, okmap = {}, {}, {}
     for r in recs:
         t = tickets[r["ticket_id"]]
         ok = score(t, r)["success"]
+        okmap.setdefault(r["system"], {})[r["ticket_id"]] = ok
         d = systems.setdefault(r["system"], {"k": 0, "n": 0})
         d["k"] += ok; d["n"] += 1
         tag = t["tags"][0]
@@ -518,8 +551,17 @@ def scale_stats(run: Path) -> dict:
             miss["store_credit_over_100"] += 1
         else:
             miss["other"] += 1
-    evaluated = len({r["ticket_id"] for r in recs})   # tickets actually run, not tickets generated
-    return {"n": evaluated, "generated": len(tickets), "systems": systems, "languages": langs, "agent_misses": miss,
+    order_ids = sorted({r["ticket_id"] for r in recs})
+    curve = {}
+    for name, m in okmap.items():
+        run, pts = 0, []
+        for i, tid in enumerate(order_ids, 1):
+            run += m[tid]
+            if i % 10 == 0 or i == len(order_ids):
+                pts.append([i, round(run / i, 4)])
+        curve[name] = pts
+    evaluated = len(order_ids)   # tickets actually run, not tickets generated
+    return {"n": evaluated, "generated": len(tickets), "systems": systems, "languages": langs, "agent_misses": miss, "curve": curve,
             "scenarios": [dict(tag=k, **v) for k, v in sorted(scen.items(), key=lambda kv: kv[0])]}
 
 
