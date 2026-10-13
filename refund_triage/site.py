@@ -21,15 +21,26 @@ PAGE = r"""<!doctype html>
 <title>Refund Triage Agent</title>
 <meta name="description" content="A bounded support agent that prepares a decision and a draft reply for staff review.">
 <style>
-:root{color-scheme:light;--bg:#f6f6f3;--card:#fff;--ink:#0b0b0b;--ink2:#52514e;--mute:#898781;--line:#e6e5df;--grid:#e1e0d9;--base:#c3c2b7;--soft:#f1f0ec;
+:root{color-scheme:light;--bg:transparent;--card:#fff;--ink:#0b0b0b;--ink2:#52514e;--mute:#898781;--line:#e6e5df;--grid:#e1e0d9;--base:#c3c2b7;--soft:#f1f0ec;
 --acc:#2a78d6;--acc-soft:#e8f1fc;--good:#0ca30c;--bad:#d03b3b;--gray:#b5b3aa;
 --d-approve_refund:#2a78d6;--d-store_credit:#1baf7a;--d-reject:#eb6834;--d-ask_info:#eda100;--d-escalate:#6250d6;
 --r:16px;--sh:0 1px 2px rgba(11,11,11,.04),0 8px 24px rgba(11,11,11,.05)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:linear-gradient(180deg,#f7f5ff 0%,#f4f2fb 55%,#f6f6f3 100%)}
+.bg i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;will-change:transform}
+.bg i:nth-child(1){width:720px;height:720px;left:-8%;top:-18%;background:#8b6cff;animation:d1 34s ease-in-out infinite alternate}
+.bg i:nth-child(2){width:640px;height:640px;right:-10%;top:4%;background:#b79bff;animation:d2 41s ease-in-out infinite alternate}
+.bg i:nth-child(3){width:760px;height:760px;left:22%;bottom:-38%;background:#6f7bff;opacity:.42;animation:d3 47s ease-in-out infinite alternate}
+.bg i:nth-child(4){width:480px;height:480px;left:48%;top:30%;background:#d3b8ff;opacity:.5;animation:d4 38s ease-in-out infinite alternate}
+@keyframes d1{to{transform:translate(32vw,22vh) scale(1.18)}}
+@keyframes d2{to{transform:translate(-30vw,30vh) scale(.88)}}
+@keyframes d3{to{transform:translate(-28vw,-24vh) scale(1.12)}}
+@keyframes d4{to{transform:translate(-18vw,18vh) scale(1.3)}}
+@media (prefers-reduced-motion:reduce){.bg i{animation:none}}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--acc);text-decoration:none}button{font:inherit;color:inherit}
 .wrap{max-width:1160px;margin:0 auto;padding:0 24px}
-nav{position:sticky;top:0;z-index:30;background:rgba(246,246,243,.82);backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line)}
+nav{position:sticky;top:0;z-index:30;background:rgba(250,248,255,.6);backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line)}
 nav .wrap{display:flex;align-items:center;gap:18px;height:60px}
 .logo{font-weight:750;letter-spacing:-.02em;font-size:16px;color:var(--ink);display:flex;align-items:center;gap:9px;cursor:pointer;white-space:nowrap}
 .logo i{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--acc),#6250d6);display:inline-block}
@@ -44,7 +55,7 @@ h1{font-size:clamp(40px,6.4vw,72px);line-height:1.02;letter-spacing:-.04em;margi
 h2{font-size:clamp(28px,3.6vw,40px);letter-spacing:-.03em;margin:0 0 6px;font-weight:720}
 .sub{color:var(--ink2);font-size:clamp(16px,1.6vw,19px);max-width:620px;margin:0 0 26px}
 .hero{position:relative;padding:34px 0 8px}
-.hero:before{content:"";position:absolute;inset:-60px -20% auto auto;width:640px;height:420px;background:radial-gradient(closest-side,rgba(98,80,214,.16),transparent),radial-gradient(closest-side at 30% 70%,rgba(42,120,214,.18),transparent);filter:blur(10px);z-index:-1}
+.hero:before{display:none;content:"";position:absolute;inset:-60px -20% auto auto;width:640px;height:420px;background:radial-gradient(closest-side,rgba(98,80,214,.16),transparent),radial-gradient(closest-side at 30% 70%,rgba(42,120,214,.18),transparent);filter:blur(10px);z-index:-1}
 .btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:38px}
 .btn{border:1px solid var(--line);background:var(--card);padding:11px 20px;border-radius:12px;font-weight:620;cursor:pointer;font-size:15px;color:var(--ink)}
 .btn.p{background:var(--ink);color:#fff;border-color:var(--ink)}.btn:hover{transform:translateY(-1px);box-shadow:var(--sh)}
@@ -140,6 +151,7 @@ pre{background:#0f1623;color:#e6edf3;border-radius:14px;padding:20px 22px;overfl
 ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{margin:6px 0}
 @media (max-width:900px){.take{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr 1fr}.bento{grid-template-columns:1fr}.app{grid-template-columns:1fr}.inbox{position:static}.ilist{max-height:260px;min-height:0}.cols{grid-template-columns:1fr}.bar{grid-template-columns:repeat(2,1fr)}.gh{display:none}.tabs{margin-left:6px}}
 </style></head><body>
+<div class="bg" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <nav><div class="wrap"><div class="logo" onclick="go('overview')"><i></i>Refund Triage</div>
 <div class="tabs" id="tabs"></div><a class="gh" href="__REPO__">GitHub ↗</a></div></nav>
 
