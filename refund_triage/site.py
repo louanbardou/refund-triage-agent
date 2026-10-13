@@ -19,6 +19,7 @@ REPO = "https://github.com/louanbardou/refund-triage-agent"
 PAGE = r"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Refund Triage Agent</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%238b6cff'/%3E%3Crect x='6.8' y='10.6' width='17.4' height='12' rx='2.4' fill='none' stroke='white' stroke-width='1.8'/%3E%3Cpath d='M7.6 11.9l7.9 5.6 7.9-5.6' fill='none' stroke='white' stroke-width='1.8'/%3E%3Ccircle cx='23.6' cy='22.6' r='5.3' fill='%231a9e62' stroke='white' stroke-width='1.6'/%3E%3C/svg%3E">
 <meta name="description" content="A bounded support agent that prepares a decision and a draft reply for staff review.">
 <style>
 :root{color-scheme:light;--bg:transparent;--card:#fff;--ink:#0b0b0b;--ink2:#52514e;--mute:#898781;--line:#e6e5df;--grid:#e1e0d9;--base:#c3c2b7;--soft:#f1f0ec;
@@ -26,12 +27,12 @@ PAGE = r"""<!doctype html>
 --d-approve_refund:#2a78d6;--d-store_credit:#1baf7a;--d-reject:#eb6834;--d-ask_info:#eda100;--d-escalate:#6250d6;
 --r:16px;--sh:0 1px 2px rgba(11,11,11,.04),0 8px 24px rgba(11,11,11,.05)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
-.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:linear-gradient(180deg,#f7f5ff 0%,#f4f2fb 55%,#f6f6f3 100%)}
-.bg i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;will-change:transform}
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:linear-gradient(180deg,#faf9ff 0%,#f6f5fb 55%,#f6f6f3 100%)}
+.bg i{position:absolute;border-radius:50%;filter:blur(100px);opacity:.22;will-change:transform}
 .bg i:nth-child(1){width:720px;height:720px;left:-8%;top:-18%;background:#8b6cff;animation:d1 34s ease-in-out infinite alternate}
 .bg i:nth-child(2){width:640px;height:640px;right:-10%;top:4%;background:#b79bff;animation:d2 41s ease-in-out infinite alternate}
-.bg i:nth-child(3){width:760px;height:760px;left:22%;bottom:-38%;background:#6f7bff;opacity:.42;animation:d3 47s ease-in-out infinite alternate}
-.bg i:nth-child(4){width:480px;height:480px;left:48%;top:30%;background:#d3b8ff;opacity:.5;animation:d4 38s ease-in-out infinite alternate}
+.bg i:nth-child(3){width:760px;height:760px;left:22%;bottom:-38%;background:#7f8bff;opacity:.2;animation:d3 47s ease-in-out infinite alternate}
+.bg i:nth-child(4){width:480px;height:480px;left:48%;top:30%;background:#d3b8ff;opacity:.26;animation:d4 38s ease-in-out infinite alternate}
 @keyframes d1{to{transform:translate(32vw,22vh) scale(1.18)}}
 @keyframes d2{to{transform:translate(-30vw,30vh) scale(.88)}}
 @keyframes d3{to{transform:translate(-28vw,-24vh) scale(1.12)}}
@@ -43,7 +44,7 @@ a{color:var(--acc);text-decoration:none}button{font:inherit;color:inherit}
 nav{position:sticky;top:0;z-index:30;background:rgba(250,248,255,.6);backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line)}
 nav .wrap{display:flex;align-items:center;gap:18px;height:60px}
 .logo{font-weight:750;letter-spacing:-.02em;font-size:16px;color:var(--ink);display:flex;align-items:center;gap:9px;cursor:pointer;white-space:nowrap}
-.logo i{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--acc),#6250d6);display:inline-block}
+.logo .mark{flex:none;filter:drop-shadow(0 2px 6px rgba(98,80,214,.35))}
 .tabs{display:flex;gap:2px;margin-left:18px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
 .tab{border:0;background:transparent;padding:8px 14px;border-radius:10px;color:var(--ink2);cursor:pointer;font-weight:550;font-size:14.5px;white-space:nowrap}
 .tab:hover{background:var(--soft);color:var(--ink)}.tab.on{background:var(--ink);color:#fff}
@@ -62,7 +63,7 @@ h2{font-size:clamp(28px,3.6vw,40px);letter-spacing:-.03em;margin:0 0 6px;font-we
 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh)}
 .tile .l{color:var(--mute);font-size:13.5px;font-weight:550}.tile .v{font-size:40px;font-weight:740;letter-spacing:-.03em;line-height:1.1;margin-top:6px}
-.tile .s{color:var(--mute);font-size:13px;margin-top:4px}
+.tile .s{color:var(--mute);font-size:13px;margin-top:4px}.tile .s.pos{color:#13804e;font-weight:650}
 .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:0 0 16px}
 .stp{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
 .stp b{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:var(--acc-soft);color:var(--acc);font-size:14px;margin-bottom:12px}
@@ -150,9 +151,39 @@ video{width:100%;max-width:960px;border-radius:var(--r);border:1px solid var(--l
 pre{background:#0f1623;color:#e6edf3;border-radius:14px;padding:20px 22px;overflow:auto;font:13.5px/1.7 ui-monospace,Menlo,Consolas,monospace;margin:0;max-width:860px}
 ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{margin:6px 0}
 @media (max-width:900px){.take{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr 1fr}.bento{grid-template-columns:1fr}.app{grid-template-columns:1fr}.inbox{position:static}.ilist{max-height:260px;min-height:0}.cols{grid-template-columns:1fr}.bar{grid-template-columns:repeat(2,1fr)}.gh{display:none}.tabs{margin-left:6px}}
+
+.pbar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.pbar .bar{flex:1;margin:0;min-width:320px}
+.it{display:flex;align-items:center;gap:7px;padding:8px 12px;grid-template-columns:none}
+.it .tid{font-size:12px}.it{min-width:0;overflow:hidden}.it .sbj{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink2);font-size:12.5px}
+.it .dd{width:8px;height:8px;border-radius:50%;flex:none}
+/* desktop: the whole platform fits one screen, no page scroll */
+@media (min-width:901px){
+ #v-platform.on{display:flex;flex-direction:column;height:calc(100vh - 60px);padding:12px 0 14px;overflow:hidden}
+ .clean #v-platform.on{height:100vh}
+ .pbar{flex:none;flex-wrap:nowrap;margin-bottom:10px}
+ .pbar .bar{padding:7px 16px;gap:18px;border-radius:12px;min-width:0}.pbar .bar .n{font-size:17px}.pbar .bar .k{font-size:11px}
+ .pbar .tog{white-space:nowrap}
+ .app{flex:1;min-height:0;grid-template-columns:400px 1fr;gap:12px;align-items:stretch}
+ .inbox{position:static;height:100%;min-height:0;display:flex;flex-direction:column}
+ .ftabs{padding:7px 8px;flex:none}.ft{padding:4px 10px;font-size:12.5px}
+ .ilist{flex:1;min-height:0;max-height:none;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(16,minmax(26px,1fr));grid-auto-flow:column;align-content:start}
+ .it{padding:0 9px;border-right:1px solid var(--line)}
+ .work{height:100%;min-height:0;gap:10px}
+ .tl{flex:none;padding:6px 12px;border-radius:12px}.ts{padding:2px 10px;font-size:12.5px}
+ .cols{flex:1;min-height:0;grid-template-columns:1fr 1.15fr;gap:10px;grid-template-rows:minmax(0,1fr)}
+ .colL,.colR{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
+ .pn{padding:12px 14px;border-radius:14px;overflow:auto}.pn h4{margin-bottom:6px}
+ .colL .pn:first-child{flex:none;max-height:44%}.colL .pn:last-child{flex:1}
+ .colR .pn:first-child{flex:none}.colR .pn:last-child{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+ .mail{font-size:13.5px;line-height:1.5}.fact{padding:8px 12px;margin-bottom:6px}.fr{font-size:13px;padding:1px 0}.rule{font-size:12.5px;padding:4px 0}
+ .rec .big,.amt{font-size:19px}.note{font-size:12.5px;padding:6px 10px;margin-top:6px}
+ textarea{flex:1;min-height:80px;height:auto;resize:none;font-size:14px;line-height:1.5;padding:12px}
+ .acts{margin-top:8px;flex-wrap:nowrap}.acts .go,.acts .sec{flex:1 1 auto;padding:10px 12px;font-size:14px;white-space:nowrap}.hint{font-size:12px;margin-top:6px}
+}
+@media (min-width:901px) and (max-height:760px){.note{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.mail{font-size:13px}.colL .pn:first-child{max-height:34%}.hint{display:none}.rec .big,.amt{font-size:17px}}
 </style></head><body>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-<nav><div class="wrap"><div class="logo" onclick="go('overview')"><i></i>Refund Triage</div>
+<nav><div class="wrap"><div class="logo" onclick="go('overview')"><svg class="mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a7cff"/><stop offset="1" stop-color="#3b82e6"/></linearGradient></defs><circle cx="16" cy="16" r="16" fill="url(#lg)"/><rect x="6.8" y="10.6" width="17.4" height="12" rx="2.4" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M7.6 11.9l7.9 5.6 7.9-5.6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23.6" cy="22.6" r="5.3" fill="#1a9e62" stroke="#fff" stroke-width="1.6"/><path d="M21.2 22.7l1.8 1.8 3.2-3.5" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Refund Triage</div>
 <div class="tabs" id="tabs"></div><a class="gh" href="__REPO__">GitHub ↗</a></div></nav>
 
 <main class="wrap">
@@ -191,10 +222,10 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
 </section>
 
 <section class="view" id="v-platform">
- <div class="pf-head"><h2>Staff platform</h2><span class="grow"></span>
+ <div class="pbar"><div class="bar" id="statbar"></div>
+  <label class="tog"><input type="checkbox" id="animtog"> Animate agent</label>
   <label class="tog"><input type="checkbox" id="evaltog"> Evaluation labels</label>
   <select id="eng" aria-label="Engine"></select></div>
- <div class="bar" id="statbar"></div>
  <div class="app"><div class="inbox"><div class="ftabs" id="ftabs"></div><div class="ilist" id="ilist"></div></div><div class="work" id="work"></div></div>
 </section>
 
@@ -227,8 +258,8 @@ const DEC={approve_refund:'Approve refund',store_credit:'Offer store credit',rej
 const RULES={R1:'Unused item, within 30 days of delivery: full refund',R2:'Final-sale item: not returnable unless damaged',R3:'Days 31–45: store credit only; after 45: refused',R4:'Damaged or defective: within 14 days with photo, refund; no photo, ask; later, manager',R5:'Processing orders can be cancelled; shipped orders cannot',R6:'Shipped: up to 10 days late is in transit; beyond, a manager investigates',R7:'Refund above 100 EUR needs manager approval',R8:'Sender email must match the order; reveal nothing otherwise',R9:'Explicit exception request: a manager decides'};
 const CHK={decision_ok:'decision',rules_ok:'rules',amount_ok:'amount',language_ok:'language',forbidden_ok:'claims',leak_ok:'leak',promise_ok:'promises',amounts_ok:'figures',no_error:'no error'};
 const ORDER=['b0_templates','b1_access','b1_access_days','agent_no_reflection','agent'].filter(s=>S[s]);
-const ACCENT='#2a78d6',GRAY='#b5b3aa';
-const colorOf=s=>s==='agent'?ACCENT:GRAY;
+const GREEN='#1a9e62',GREEN2='#9fd8bc',GRAY='#b5b3aa';
+const colorOf=s=>s==='agent'?GREEN:s==='agent_no_reflection'?GREEN2:GRAY;
 const pct=x=>Math.round(x*100)+'%';
 const MAN=S.manual.staff_minutes_per_ticket;
 
@@ -243,8 +274,8 @@ function parseHash(){const p=location.hash.slice(1).split('&'),o={};p.slice(1).f
 addEventListener('hashchange',()=>boot());
 
 const A=S.agent||S[ORDER[ORDER.length-1]];
-[[pct(A.task_success),'Task success',D.summary._meta.n_tickets+' tickets'],[A.staff_minutes_per_ticket.toFixed(1)+' min','Staff time per ticket','vs '+MAN.toFixed(1)+' min manual (modelled)'],['$'+A.cost_per_ticket_usd.toFixed(4),'Model cost per ticket','tokens only'],[A.latency_mean_s+' s','Latency per ticket','mean']]
- .forEach(([v,l,s])=>{const t=el('div','tile');t.appendChild(el('div','l',l));t.appendChild(el('div','v',v));t.appendChild(el('div','s',s));$('#tiles').appendChild(t)});
+[[pct(A.task_success),'Task success',D.summary._meta.n_tickets+' tickets'],[A.staff_minutes_per_ticket.toFixed(1)+' min','Staff time per ticket','↓ '+Math.round((1-A.staff_minutes_per_ticket/MAN)*100)+'% vs '+MAN.toFixed(1)+' min manual (modelled)','pos'],['$'+A.cost_per_ticket_usd.toFixed(4),'Model cost per ticket','tokens only'],[A.latency_mean_s+' s','Latency per ticket','mean']]
+ .forEach(([v,l,s,c])=>{const t=el('div','tile');t.appendChild(el('div','l',l));t.appendChild(el('div','v',v));t.appendChild(el('div','s'+(c?' '+c:''),s));$('#tiles').appendChild(t)});
 
 const niceMax=v=>{if(v<=0)return 1;const e=Math.pow(10,Math.floor(Math.log10(v))),f=v/e,n=f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10;return n*e};
 function hbar(host,items,max,fmtTick){host.textContent='';const ticks=[0,.25,.5,.75,1];
@@ -269,7 +300,7 @@ function drawResults(){
 }
 function takeaways(){const T=$('#take');T.textContent='';const llm=ORDER.filter(s=>s!=='b0_templates');if(!llm.length)return;
  const ks=llm.map(s=>Math.round(S[s].task_success*S[s].n)),n=S[llm[0]].n,lo=Math.min(...ks),hi=Math.max(...ks);
- const items=[['Accuracy is at the ceiling','Every model system passes '+(lo===hi?lo:lo+'–'+hi)+' of '+n+' tickets, so these checks cannot rank them.']];
+ const items=[['Accuracy is at the ceiling','Every model system passes '+(lo===hi?lo:lo+'–'+hi)+' of '+n+' tickets, so these checks cannot rank them.'+(D.repeat?' Decisions were identical across '+D.repeat.runs+' repeated runs.':'')]];
  if(S.agent&&S.b1_access){items.push(['The gap is staff time','Modelled '+S.agent.staff_minutes_per_ticket.toFixed(1)+' min with the agent vs '+S.b1_access.staff_minutes_per_ticket.toFixed(1)+' min pasting by hand. It rests on an assumed 2.5 min manual lookup.']);
   items.push(['It costs more and is slower',(S.agent.cost_per_ticket_usd/S.b1_access.cost_per_ticket_usd).toFixed(1)+'× the cost and '+S.agent.latency_mean_s+' s vs '+S.b1_access.latency_mean_s+' s per ticket.'])}
  items.forEach(([h,t])=>{const c=el('div','card');c.appendChild(el('b','',h));c.appendChild(el('span','',t));T.appendChild(c)})}
@@ -282,13 +313,13 @@ function heat(){const H=$('#heat');H.textContent='';const ids=[...new Set(D.rows
  const tb=$('#restable');tb.textContent='';const hr=el('tr');['System','Task success','95% interval','Decision acc.','Wrong-money','Reply flags','Latency mean / p95','Cost / ticket','Staff min'].forEach(h=>hr.appendChild(el('th','',h)));tb.appendChild(hr);
  ORDER.forEach(s=>{const m=S[s],r=el('tr');[NAME[s],pct(m.task_success),pct(m.task_success_ci95[0])+' – '+pct(m.task_success_ci95[1]),pct(m.decision_accuracy),m.wrong_money_decisions,m.reply_flag_tickets,m.latency_mean_s+' / '+m.latency_p95_s+' s','$'+m.cost_per_ticket_usd.toFixed(5),m.staff_minutes_per_ticket.toFixed(2)].forEach(v=>r.appendChild(el('td','',String(v))));tb.appendChild(r)})}
 
-let eng=S.agent?'agent':ORDER[0],sel=null,filter='all',timer=null,typer=null;
+let eng=S.agent?'agent':ORDER[0],sel=null,filter='all',timer=null,typer=null,ANIM=false,forceAnim=false;
 const status={},processed={},edited={};
 const key=()=>eng+'|'+sel;
 const rowsOf=()=>D.rows.filter(r=>r.system===eng).sort((a,b)=>a.ticket_id<b.ticket_id?-1:1);
 const st=r=>status[eng+'|'+r.ticket_id]||'pending';
 const engSel=$('#eng');ORDER.forEach(s=>{const o=el('option','',SHORT[s]);o.value=s;engSel.appendChild(o)});engSel.onchange=()=>{eng=engSel.value;sel=null;renderPlatform()};
-$('#evaltog').onchange=()=>{if(sel)renderTicket()};
+$('#evaltog').onchange=()=>{if(sel)renderTicket()};$('#animtog').onchange=()=>{ANIM=$('#animtog').checked};
 function bar(){const rs=rowsOf(),n=rs.length,sent=rs.filter(r=>st(r)==='sent').length,esc=rs.filter(r=>st(r)==='escalated').length,ed=rs.filter(r=>edited[eng+'|'+r.ticket_id]).length;
  const saved=rs.reduce((a,r)=>a+(st(r)==='sent'?MAN-(edited[eng+'|'+r.ticket_id]?2.5:1.0):0),0);
  const B=$('#statbar');B.textContent='';[['Pending',n-sent-esc],['Sent',sent],['Escalated',esc],['Edited',ed],['Time saved',saved.toFixed(1)+' min']].forEach(([k,v])=>{const d=el('div');d.appendChild(el('div','k',k));d.appendChild(el('div','n',String(v)));B.appendChild(d)});
@@ -296,9 +327,9 @@ function bar(){const rs=rowsOf(),n=rs.length,sent=rs.filter(r=>st(r)==='sent').l
 function inbox(){const L=$('#ilist');L.textContent='';const F=$('#ftabs');F.textContent='';
  [['all','All'],['pending','Pending'],['mgr','Manager'],['done','Done']].forEach(([k,l])=>{const b=el('button','ft'+(filter===k?' on':''),l);b.onclick=()=>{filter=k;inbox()};F.appendChild(b)});
  const rs=rowsOf().filter(r=>filter==='all'||(filter==='pending'&&st(r)==='pending')||(filter==='mgr'&&r.result.decision==='escalate')||(filter==='done'&&st(r)!=='pending'));
- rs.forEach(r=>{const b=el('button','it'+(r.ticket_id===sel?' on':'')+(st(r)!=='pending'?' done':''));b.appendChild(el('span','sd '+st(r)));
-  const m=el('div');m.appendChild(el('div','t',D.tickets[r.ticket_id].subject));m.appendChild(el('div','f',r.ticket_id+' · '+D.tickets[r.ticket_id].from_email));b.appendChild(m);
-  const p=el('span','dpill');const dot=el('i');dot.style.background=processed[eng+'|'+r.ticket_id]?'var(--d-'+r.result.decision+')':'var(--base)';p.appendChild(dot);p.appendChild(document.createTextNode(processed[eng+'|'+r.ticket_id]?(DEC[r.result.decision]||'').split(' ')[0]:'New'));b.appendChild(p);
+ rs.forEach(r=>{const b=el('button','it'+(r.ticket_id===sel?' on':'')+(st(r)!=='pending'?' done':''));b.title=r.ticket_id+' · '+D.tickets[r.ticket_id].subject+' · '+D.tickets[r.ticket_id].from_email;
+  b.appendChild(el('span','sd '+st(r)));b.appendChild(el('b','tid',r.ticket_id));b.appendChild(el('span','sbj',D.tickets[r.ticket_id].subject));
+  const dd=el('i','dd');dd.style.background='var(--d-'+r.result.decision+')';b.appendChild(dd);
   b.onclick=()=>{sel=r.ticket_id;inbox();renderTicket()};L.appendChild(b)});
  if(!rs.length)L.appendChild(el('div','empty','Nothing here.'))}
 function renderPlatform(){if(!rowsOf().length)return;engSel.value=eng;if(!sel)sel=(rowsOf().find(r=>st(r)==='pending')||rowsOf()[0]).ticket_id;bar();inbox();renderTicket()}
@@ -311,14 +342,14 @@ function factsNode(r){const f=el('div');if(!r.tool_calls.length){f.appendChild(e
   if(o.days_past_estimated_delivery!=null)row('Estimated',o.estimated_delivery+' · '+o.days_past_estimated_delivery+' days late');
   o.items.forEach(i=>row(i.name+(i.final_sale?' (final sale)':''),i.price.toFixed(2)+' EUR'));if(o.items.length>1)row('Total',o.order_total.toFixed(2)+' EUR');f.appendChild(d)});return f}
 function renderTicket(){const r=rowsOf().find(x=>x.ticket_id===sel);if(!r)return;const t=D.tickets[sel],x=r.result,W=$('#work');clearInterval(timer);clearInterval(typer);W.textContent='';
- const done=!!processed[key()];
+ const done=(!!processed[key()]||!ANIM)&&!forceAnim;forceAnim=false;if(!ANIM)processed[key()]=true;
  const tl=el('div','tl');const nodes=steps(r).map((s,i)=>{if(i)tl.appendChild(el('span','ar','›'));const n=el('span','ts'+(done?' ok':''));n.appendChild(el('b','',done?'✓':String(i+1)));n.appendChild(document.createTextNode(s));tl.appendChild(n);return n});
- const rep=el('button','rep','↻ Replay');rep.onclick=()=>{delete processed[key()];inbox();renderTicket()};tl.appendChild(rep);W.appendChild(tl);
+ const rep=el('button','rep','↻ Replay');rep.onclick=()=>{delete processed[key()];forceAnim=true;inbox();renderTicket()};tl.appendChild(rep);W.appendChild(tl);
  const cols=el('div','cols');W.appendChild(cols);
  const left=el('div','pn');left.appendChild(el('h4','','Customer email'));left.appendChild(el('div','from',t.from_email+' · '+sel));left.appendChild(el('div','mail',t.body));
  const leftF=el('div','pn');leftF.appendChild(el('h4','','Facts retrieved'));
- const l2=el('div');l2.style.cssText='display:flex;flex-direction:column;gap:14px;min-width:0';l2.appendChild(left);l2.appendChild(leftF);cols.appendChild(l2);
- const rr=el('div');rr.style.cssText='display:flex;flex-direction:column;gap:14px;min-width:0';cols.appendChild(rr);
+ const l2=el('div','colL');l2.appendChild(left);l2.appendChild(leftF);cols.appendChild(l2);
+ const rr=el('div','colR');cols.appendChild(rr);
  const rec=el('div','pn'),drf=el('div','pn');rr.appendChild(rec);rr.appendChild(drf);
  function reveal(instant){leftF.appendChild(factsNode(r));(x.rules_cited||[]).forEach(k=>{const q=el('div','rule');q.appendChild(el('b','',k));q.appendChild(document.createTextNode(RULES[k]||''));leftF.appendChild(q)});
   rec.textContent='';rec.appendChild(el('h4','','Recommendation'));const rc=el('div','rec');const dot=el('span','dot');dot.style.background='var(--d-'+x.decision+')';rc.appendChild(dot);rc.appendChild(el('span','big',DEC[x.decision]||x.decision));
@@ -334,29 +365,47 @@ function renderTicket(){const r=rowsOf().find(x=>x.ticket_id===sel);if(!r)return
   const alt=el('button','sec',esc?'Approve & send anyway':'Escalate to manager');alt.appendChild(el('kbd','',esc?'A':'E'));
   const st0=status[key()];if(st0){primary.disabled=true;alt.disabled=true;a.appendChild(el('span','hint',st0==='sent'?'Sent (simulation).':'Sent to manager (simulation).'))}
   primary.onclick=()=>act(esc?'escalated':'sent',ta,full);alt.onclick=()=>act(esc?'sent':'escalated',ta,full);a.appendChild(primary);a.appendChild(alt);drf.appendChild(a);
-  drf.appendChild(el('div','hint','Nothing is really sent. Keys: J / K move between tickets.'));
+  drf.appendChild(el('div','hint','Enter accepts the recommendation · A approve · E escalate · J / K move · nothing is really sent'));
   if($('#evaltog').checked){const e=el('div','evalbox');e.appendChild(el('div','','Evaluation label: expected '+(DEC[t.expected.decision]||t.expected.decision)+' · rules '+t.expected.rules.join(', ')));if(t.label_note)e.appendChild(el('div','',t.label_note));if((r.reply_flags||[]).length)e.appendChild(el('div','','Reply flags: '+r.reply_flags.join(', ')));Object.entries(r.score.checks).forEach(([k,v])=>e.appendChild(el('span','ck'+(v?'':' f'),(v?'✓ ':'✕ ')+(CHK[k]||k))));drf.appendChild(e)}}
  function skeleton(){rec.appendChild(el('h4','','Recommendation'));[60,90,40].forEach(w=>{const s=el('div','skel');s.style.width=w+'%';rec.appendChild(s)});drf.appendChild(el('h4','','Draft reply'));[100,95,90,60].forEach(w=>{const s=el('div','skel');s.style.width=w+'%';drf.appendChild(s)})}
  if(done){reveal(true)}else{skeleton();let i=0;nodes[0].className='ts run';timer=setInterval(()=>{nodes[i].className='ts ok';nodes[i].firstChild.textContent='✓';i++;if(i<nodes.length){nodes[i].className='ts run'}else{clearInterval(timer);processed[key()]=true;inbox();reveal(false)}},330)}}
 function act(kind,ta,orig){const k=key();status[k]=kind;edited[k]=ta.value.trim()!==orig.trim();
  toast(kind==='sent'?'Reply sent'+(edited[k]?' (edited)':'')+' · simulation':'Sent to manager · simulation');bar();inbox();
  const rs=rowsOf(),i=rs.findIndex(r=>r.ticket_id===sel),nx=rs.slice(i+1).concat(rs.slice(0,i)).find(r=>st(r)==='pending');
- if(nx){sel=nx.ticket_id;setTimeout(()=>{inbox();renderTicket();const it=document.querySelector('.it.on');if(it)it.scrollIntoView({block:'nearest'})},350)}else renderTicket()}
+ if(nx){sel=nx.ticket_id;setTimeout(()=>{inbox();renderTicket();const it=document.querySelector('.it.on');if(it)it.scrollIntoView({block:'nearest'})},120)}else renderTicket()}
 addEventListener('keydown',e=>{if(!$('#v-platform').classList.contains('on'))return;const tg=e.target.tagName;if(tg==='TEXTAREA'||tg==='SELECT'||tg==='INPUT'||e.metaKey||e.ctrlKey)return;
  const rs=rowsOf(),i=rs.findIndex(r=>r.ticket_id===sel);
  if(e.key==='j'||e.key==='k'){const n=rs[Math.max(0,Math.min(rs.length-1,i+(e.key==='j'?1:-1)))];sel=n.ticket_id;inbox();renderTicket();const it=document.querySelector('.it.on');if(it)it.scrollIntoView({block:'nearest'})}
+ if(e.key==='Enter'){const b=document.querySelector('.acts .go');if(b&&!b.disabled){e.preventDefault();b.click()}}
  if(e.key==='a'||e.key==='e'){const b=[...document.querySelectorAll('.acts .go,.acts .sec')].filter(b=>!b.disabled).find(b=>b.textContent.endsWith(e.key.toUpperCase()));if(b)b.click()}});
 
-function boot(){const [k,o]=parseHash();if(o.e&&S[o.e])eng=o.e;if(o.t)sel=o.t;if(o.clean)document.body.classList.add('clean');if(o.z)document.body.style.zoom=o.z;if(o.ev)$('#evaltog').checked=true;go(k||'overview');if(o.sc)setTimeout(()=>{const t=document.getElementById(o.sc);if(t)t.scrollIntoView({block:'start'})},60)}
+function boot(){const [k,o]=parseHash();if(o.e&&S[o.e])eng=o.e;if(o.t)sel=o.t;if(o.clean)document.body.classList.add('clean');if(o.z)document.body.style.zoom=o.z;if(o.ev)$('#evaltog').checked=true;if(o.anim){ANIM=true;$('#animtog').checked=true}go(k||'overview');if(o.sc)setTimeout(()=>{const t=document.getElementById(o.sc);if(t)t.scrollIntoView({block:'start'})},60)}
 boot();
 </script></body></html>
 """
 
 
-def build(run: Path, out: Path, video: Path | None) -> None:
+def repeat_stats(rep: Path) -> dict:
+    """Run-to-run stability from a --repeats run: do decisions change between repeats?"""
+    recs = [json.loads(line) for line in (rep / "records.jsonl").read_text().splitlines()]
+    sm = json.loads((rep / "summary.json").read_text())
+    out = {"runs": max(r.get("repeat", 0) for r in recs) + 1}
+    for sysname in ("b1_access", "agent"):
+        d = {}
+        for r in recs:
+            if r["system"] == sysname:
+                d.setdefault(r["ticket_id"], set()).add(r["result"]["decision"])
+        out[sysname] = {"unstable_tickets": sum(len(v) > 1 for v in d.values()), "reply_flag_tickets": sm[sysname]["reply_flag_tickets"],
+                        "n": sm[sysname]["n"]}
+    return out
+
+
+def build(run: Path, out: Path, video: Path | None, repeat: Path | None = None, scale: Path | None = None) -> None:
     summary = json.loads((run / "summary.json").read_text())
     records = [json.loads(line) for line in (run / "records.jsonl").read_text().splitlines()]
     data = build_data(load_tickets(), records, summary)
+    if repeat:
+        data["repeat"] = repeat_stats(repeat)
     (out / "data").mkdir(parents=True, exist_ok=True)
     (out / "data" / "results.json").write_text(json.dumps(data, ensure_ascii=False))
     if video and video.exists():
@@ -375,8 +424,9 @@ def main():
     ap.add_argument("run")
     ap.add_argument("--out", default=str(ROOT / "docs"))
     ap.add_argument("--video", default="")
+    ap.add_argument("--repeat", default="", help="a results/<run> made with --repeats, for the stability note")
     a = ap.parse_args()
-    build(Path(a.run), Path(a.out), Path(a.video) if a.video else None)
+    build(Path(a.run), Path(a.out), Path(a.video) if a.video else None, Path(a.repeat) if a.repeat else None)
     print(f"site written to {a.out}")
 
 

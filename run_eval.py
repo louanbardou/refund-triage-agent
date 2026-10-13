@@ -43,7 +43,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--systems", default="b0")
     ap.add_argument("--tickets", default="", help="comma-separated ids; default all")
-    ap.add_argument("--set", default="all", choices=["all", "core", "hard"])
+    ap.add_argument("--set", default="all", choices=["all", "core", "hard", "scale"])
+    ap.add_argument("--limit", type=int, default=0, help="first N tickets only (pilot runs)")
     ap.add_argument("--repeats", type=int, default=1)
     ap.add_argument("--model", default=MODEL)
     ap.add_argument("--workers", type=int, default=1, help="1 = sequential, so latency is not distorted by parallel load")
@@ -51,9 +52,11 @@ def main():
     ap.add_argument("--verbose", action="store_true")
     a = ap.parse_args()
 
-    tickets = load_tickets()
+    tickets = load_tickets(scale=(a.set == "scale"))
     if a.set != "all":
         tickets = [t for t in tickets if t.get("set", "core") == a.set]
+    if a.limit:
+        tickets = tickets[: a.limit]
     if a.tickets:
         keep = set(a.tickets.split(","))
         tickets = [t for t in tickets if t["ticket_id"] in keep]
