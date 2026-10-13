@@ -2,6 +2,8 @@
 
 **Refund emails, handled automatically. People still sign.**
 
+**For small online shops** that answer return, cancellation and refund emails by hand: the agent finds the order, applies the returns policy and drafts the reply in the customer's language; you approve every reply, and refunds above a set amount go to a manager.
+
 Course project for *Generative and Agentic AI for Business*, MSc Data Science and AI for Business, HEC Paris (2026–2027).
 **Author: Louan Bardou (sole author).**
 Live site: https://louanbardou.github.io/refund-triage-agent/
