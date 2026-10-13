@@ -259,20 +259,15 @@ ol.how{margin:0;padding-left:18px;color:var(--ink2);font-size:17.5px;line-height
 <section class="view" id="v-video"><h2>Demo video</h2>__VIDEO__</section>
 
 <section class="view" id="v-about">
- <h2>The project</h2><p class="sub">Louan Bardou · MSc Data Science and AI for Business, HEC Paris</p>
+ <h2>The project</h2><p class="sub">Louan Bardou · HEC Paris</p>
  <div class="abt">
-  <div class="card"><div class="lab" style="margin-top:0">The problem</div><p>A small online shop answers return, cancellation and refund emails by hand. For each one, someone has to find the order, check a written policy whose rules depend on dates (day 30 is eligible, day 31 is not; a refund above 100 € needs a manager) and write the reply in the customer's language. The lookup is the slow part, and a wrong "yes" costs money.</p></div>
-  <div class="card"><div class="lab" style="margin-top:0">The solution</div><p>An agent does the lookup and the first draft. It reads the email, finds the order with read-only tools, applies the nine policy rules and writes the reply. Every draft goes to a staff member who approves, edits or escalates it. Nothing is sent automatically, and anything above 100 € goes to a manager.</p></div>
-  <div class="card"><div class="lab" style="margin-top:0">How it works</div><ol class="how">
-   <li><b>Read</b> the email, in any language.</li>
-   <li><b>Look up</b> the order, only if it belongs to the sender; day counts are computed by code.</li>
-   <li><b>Decide</b>: approve, store credit, reject, ask for information or escalate, citing the rule.</li>
-   <li><b>Check</b> the draft against the facts.</li>
-   <li><b>Review</b>: a person approves with one key, edits, or escalates.</li></ol></div>
+  <div class="card"><div class="lab" style="margin-top:0">The problem</div><p>Small shops answer refund emails by hand: find the order, count days, check the policy, write the reply.</p></div>
+  <div class="card"><div class="lab" style="margin-top:0">The solution</div><p>An agent does the lookup and drafts the reply. A person approves. Above 100 € a manager decides.</p></div>
+  <div class="card"><div class="lab" style="margin-top:0">How it works</div><ol class="how"><li><b>Read</b> the email</li><li><b>Look up</b> the order</li><li><b>Decide</b> by the policy</li><li><b>Check</b> the draft</li><li><b>Approve</b> or escalate</li></ol></div>
  </div>
  <div class="bento">
-  <div class="card full"><h3>Staff hours as tickets pile up</h3><div class="cs" id="lc-time-s">Cumulative hours of staff time. Modelled from assumed step times, not measured.</div><div id="lc-time"></div></div>
-  <div class="card full"><h3>Pass rate as the tickets are processed</h3><div class="cs">Running share of tickets passing every check, over the 500-ticket scale test. Measured. The axis is zoomed on the top of the range; keyword templates (3%) are off the scale.</div><div id="lc-rate"></div></div>
+  <div class="card full"><h3>Staff hours as tickets pile up</h3><div class="cs" id="lc-time-s">Modelled, not measured.</div><div id="lc-time"></div></div>
+  <div class="card full"><h3>Pass rate as the tickets are processed</h3><div class="cs">Measured on 500 tickets. Axis zoomed.</div><div id="lc-rate"></div></div>
  </div>
 </section>
 
@@ -368,7 +363,7 @@ function drawAbout(){
  if(S.b1_access)ser.push({name:'Paste',color:'#8f8d84',pts:hrs(mins('b1_access'))});
  if(S.agent)ser.push({name:'Agent',color:GREEN,pts:hrs(mins('agent')),w:5});
  const top=Math.max(...ser.map(q=>q.pts[q.pts.length-1][1]));
- if(S.agent){const mh=ser[0].pts[5][1],ah=ser[ser.length-1].pts[5][1];$('#lc-time-s').textContent='Cumulative hours of staff time, modelled from assumed step times (not measured). At 500 tickets the agent saves about '+Math.round(mh-ah)+' hours against fully manual handling.'}
+ if(S.agent){const mh=ser[0].pts[5][1],ah=ser[ser.length-1].pts[5][1];$('#lc-time-s').textContent='Modelled, not measured. About '+Math.round(mh-ah)+' hours saved at 500 tickets.'}
  const y1=Math.ceil(top/10)*10;lineChart($('#lc-time'),ser,{x0:0,x1:500,y0:0,y1,yt:y1/10,xt:5,fy:v=>(Number.isInteger(v)?v:v.toFixed(1))+' h',xl:'Tickets handled',xn:'After'});
  const cv=D.scale&&D.scale.curve;const host=$('#lc-rate');
  if(!cv){host.textContent='The scale-test curve appears here once the 500-ticket run is attached.';return}
