@@ -140,7 +140,7 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
 .it .dd{width:8px;height:8px;border-radius:50%;flex:none}
 /* desktop: the whole platform fits one screen, no page scroll */
 @media (min-width:901px){
- #v-platform.on{display:flex;flex-direction:column;height:calc(100vh - 60px);padding:12px 0 14px;overflow:hidden}
+ #v-platform.on{animation:none;display:flex;flex-direction:column;height:calc(100vh - 62px);padding:12px 0 14px;overflow:hidden}
  .clean #v-platform.on{height:100vh}
  .pbar{flex:none;flex-wrap:nowrap;margin-bottom:10px}
  .pbar .bar{padding:7px 16px;gap:18px;border-radius:12px;min-width:0}.pbar .bar .n{font-size:17px}.pbar .bar .k{font-size:11px}
@@ -156,13 +156,18 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
  .colL,.colR{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
  .pn{padding:12px 14px;border-radius:14px;overflow:auto}.pn h4{margin-bottom:6px}
  .colL .pn:first-child{flex:none;max-height:44%}.colL .pn:last-child{flex:1}
- .colR .pn:first-child{flex:none}.colR .pn:last-child{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+ .colR .pn:first-child{flex:0 1 auto;max-height:46%;overflow:auto}.colR .pn:last-child{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
  .mail{font-size:13.5px;line-height:1.5}.fact{padding:8px 12px;margin-bottom:6px}.fr{font-size:13px;padding:1px 0}.rule{font-size:12.5px;padding:4px 0}
  .rec .big,.amt{font-size:19px}.note{font-size:12.5px;padding:6px 10px;margin-top:6px}
  textarea{flex:1;min-height:80px;height:auto;resize:none;font-size:14px;line-height:1.5;padding:12px}
- .acts{margin-top:8px;flex-wrap:nowrap}.acts .go,.acts .sec{flex:1 1 auto;padding:10px 12px;font-size:14px;white-space:nowrap}.hint{font-size:12px;margin-top:6px}
+ .acts{margin-top:8px;flex-wrap:nowrap}.acts .go,.acts .sec{flex:1 1 0;min-width:0;padding:10px 8px;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hint{font-size:12px;margin-top:6px}
 }
 @media (min-width:901px) and (max-height:760px){.note{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.mail{font-size:13px}.colL .pn:first-child{max-height:34%}.hint{display:none}.rec .big,.amt{font-size:17px}}
+.note.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}.note.clamp.open{display:block}
+.achks{margin:8px 0 2px}.achk{display:inline-block;font-size:12px;padding:2px 9px;border-radius:8px;border:1px solid var(--line);margin:0 5px 5px 0;background:#fff;color:var(--ink2)}
+.achk.ok{color:#13804e;border-color:#bfe3cf;background:#f1faf5}.achk.w{color:#8a5a00;border-color:#e8c985;background:#fff8e6;font-weight:650}
+.att{color:#b36b00;font-weight:800;font-size:12px;flex:none}
+.tbtn{margin-left:14px;border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:4px 11px;cursor:pointer;font-weight:650}.toast.on{pointer-events:auto}
 </style></head><body>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <nav><div class="wrap"><div class="logo" onclick="go('overview')"><svg class="mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a7cff"/><stop offset="1" stop-color="#3b82e6"/></linearGradient></defs><circle cx="16" cy="16" r="16" fill="url(#lg)"/><rect x="6.8" y="10.6" width="17.4" height="12" rx="2.4" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M7.6 11.9l7.9 5.6 7.9-5.6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23.6" cy="22.6" r="5.3" fill="#1a9e62" stroke="#fff" stroke-width="1.6"/><path d="M21.2 22.7l1.8 1.8 3.2-3.5" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Refund Triage</div>
@@ -247,7 +252,7 @@ const MAN=S.manual.staff_minutes_per_ticket;
 
 const tipEl=el('div','tip');document.body.appendChild(tipEl);
 function tip(n,t){n.addEventListener('mousemove',e=>{tipEl.textContent=t;tipEl.style.display='block';tipEl.style.left=Math.min(e.clientX+14,innerWidth-270)+'px';tipEl.style.top=(e.clientY+16)+'px'});n.addEventListener('mouseleave',()=>tipEl.style.display='none');n.setAttribute('aria-label',t)}
-let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2200)}
+let tt;function toast(m,a,fn){const t=$('#toast');t.textContent=m;if(a){const b=el('button','tbtn',a);b.onclick=()=>{fn();t.classList.remove('on')};t.appendChild(b)}t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),a?5000:2200)}
 
 const VIEWS=[['overview','Overview'],['results','Results'],['platform','Platform'],['video','Video'],['run','Run it']];
 const tabs=$('#tabs');VIEWS.forEach(([k,l])=>{const b=el('button','tab',l);b.id='tab-'+k;b.onclick=()=>go(k);tabs.appendChild(b)});
@@ -303,6 +308,21 @@ const rowsOf=()=>D.rows.filter(r=>r.system===eng).sort((a,b)=>a.ticket_id<b.tick
 const st=r=>status[eng+'|'+r.ticket_id]||'pending';
 const engSel=$('#eng');ORDER.forEach(s=>{const o=el('option','',SHORT[s]);o.value=s;engSel.appendChild(o)});engSel.onchange=()=>{eng=engSel.value;sel=null;renderPlatform()};
 $('#evaltog').onchange=()=>{if(sel)renderTicket()};$('#animtog').onchange=()=>{ANIM=$('#animtog').checked};
+const LS='rt-review-v1';let lastAct=null;
+try{const j=JSON.parse(localStorage.getItem(LS)||'{}');Object.assign(status,j.status||{});Object.assign(edited,j.edited||{})}catch(e){}
+function save(){try{localStorage.setItem(LS,JSON.stringify({status,edited}))}catch(e){}}
+function autoChecks(r){const x=r.result,o=[],lk=r.tool_calls.find(c=>c.tool==='lookup_order');
+ if(lk)o.push(lk.output.error?{w:1,t:'Order not found for this sender'}:{ok:1,t:'Sender matches the order'});else if(r.tool_calls.length)o.push({ok:1,t:'Orders listed for the sender'});
+ const money=x.decision==='approve_refund'||x.decision==='store_credit';
+ if(money&&x.refund_amount!=null){const a=x.refund_amount,d=x.draft_reply||'';o.push([a.toFixed(2),a.toFixed(2).replace('.',','),String(Math.round(a))].some(v=>d.includes(v))?{ok:1,t:'Draft states '+a.toFixed(2)+' €'}:{w:1,t:'Amount not stated in the draft'})}
+ if(x.decision==='approve_refund'&&x.refund_amount!=null)o.push(x.refund_amount<=100?{ok:1,t:'Under the 100 € limit'}:{w:1,t:'Above the 100 € limit'});
+ o.push((x.rules_cited||[]).length?{ok:1,t:'Rule cited: '+x.rules_cited.join(', ')}:{w:1,t:'No rule cited'});
+ (r.reply_flags||[]).forEach(f=>o.push({w:1,t:'Check wording: '+f.replace('_',' ')}));
+ (r.guardrail_notes||[]).forEach(()=>o.push({w:1,t:'Guardrail applied'}));
+ if(r.reflection&&r.reflection.ok===false)o.push({w:1,t:'Draft was revised by the check'});
+ return o}
+const needsLook=r=>r.result.decision==='escalate'||autoChecks(r).some(c=>c.w);
+function undo(){if(!lastAct)return;const u=lastAct;lastAct=null;delete status[u.k];delete edited[u.k];save();sel=u.id;bar();inbox();renderTicket();toast('Undone')}
 function bar(){const rs=rowsOf(),n=rs.length,sent=rs.filter(r=>st(r)==='sent').length,esc=rs.filter(r=>st(r)==='escalated').length,ed=rs.filter(r=>edited[eng+'|'+r.ticket_id]).length;
  const saved=rs.reduce((a,r)=>a+(st(r)==='sent'?MAN-(edited[eng+'|'+r.ticket_id]?2.5:1.0):0),0);
  const B=$('#statbar');B.textContent='';[['Pending',n-sent-esc],['Sent',sent],['Escalated',esc],['Edited',ed],['Time saved',saved.toFixed(1)+' min']].forEach(([k,v])=>{const d=el('div');d.appendChild(el('div','k',k));d.appendChild(el('div','n',String(v)));B.appendChild(d)});
@@ -312,7 +332,7 @@ function inbox(){const L=$('#ilist');L.textContent='';const F=$('#ftabs');F.text
  const rs=rowsOf().filter(r=>filter==='all'||(filter==='pending'&&st(r)==='pending')||(filter==='mgr'&&r.result.decision==='escalate')||(filter==='done'&&st(r)!=='pending'));
  rs.forEach(r=>{const b=el('button','it'+(r.ticket_id===sel?' on':'')+(st(r)!=='pending'?' done':''));b.title=r.ticket_id+' · '+D.tickets[r.ticket_id].subject+' · '+D.tickets[r.ticket_id].from_email;
   b.appendChild(el('span','sd '+st(r)));b.appendChild(el('b','tid',r.ticket_id));b.appendChild(el('span','sbj',D.tickets[r.ticket_id].subject));
-  const dd=el('i','dd');dd.style.background='var(--d-'+r.result.decision+')';b.appendChild(dd);
+  if(needsLook(r))b.appendChild(el('b','att','!'));const dd=el('i','dd');dd.style.background='var(--d-'+r.result.decision+')';b.appendChild(dd);
   b.onclick=()=>{sel=r.ticket_id;inbox();renderTicket()};L.appendChild(b)});
  if(!rs.length)L.appendChild(el('div','empty','Nothing here.'))}
 function renderPlatform(){if(!rowsOf().length)return;engSel.value=eng;if(!sel)sel=(rowsOf().find(r=>st(r)==='pending')||rowsOf()[0]).ticket_id;bar();inbox();renderTicket()}
@@ -324,6 +344,7 @@ function factsNode(r){const f=el('div');if(!r.tool_calls.length){f.appendChild(e
   row('Order',o.order_id);row('Status',o.status,true);if(o.delivered_date)row('Delivered',o.delivered_date+' · '+o.days_since_delivery+' days ago');
   if(o.days_past_estimated_delivery!=null)row('Estimated',o.estimated_delivery+' · '+o.days_past_estimated_delivery+' days late');
   o.items.forEach(i=>row(i.name+(i.final_sale?' (final sale)':''),i.price.toFixed(2)+' EUR'));if(o.items.length>1)row('Total',o.order_total.toFixed(2)+' EUR');f.appendChild(d)});return f}
+const nt=t=>{const e=el('div','note clamp',t);e.title='Click to expand';e.onclick=()=>e.classList.toggle('open');return e};
 function renderTicket(){const r=rowsOf().find(x=>x.ticket_id===sel);if(!r)return;const t=D.tickets[sel],x=r.result,W=$('#work');clearInterval(timer);clearInterval(typer);W.textContent='';
  const done=(!!processed[key()]||!ANIM)&&!forceAnim;forceAnim=false;if(!ANIM)processed[key()]=true;
  const tl=el('div','tl');const nodes=steps(r).map((s,i)=>{if(i)tl.appendChild(el('span','ar','›'));const n=el('span','ts'+(done?' ok':''));n.appendChild(el('b','',done?'✓':String(i+1)));n.appendChild(document.createTextNode(s));tl.appendChild(n);return n});
@@ -337,8 +358,9 @@ function renderTicket(){const r=rowsOf().find(x=>x.ticket_id===sel);if(!r)return
  function reveal(instant){leftF.appendChild(factsNode(r));(x.rules_cited||[]).forEach(k=>{const q=el('div','rule');q.appendChild(el('b','',k));q.appendChild(document.createTextNode(RULES[k]||''));leftF.appendChild(q)});
   rec.textContent='';rec.appendChild(el('h4','','Recommendation'));const rc=el('div','rec');const dot=el('span','dot');dot.style.background='var(--d-'+x.decision+')';rc.appendChild(dot);rc.appendChild(el('span','big',DEC[x.decision]||x.decision));
   if((x.decision==='approve_refund'||x.decision==='store_credit')&&x.refund_amount!=null)rc.appendChild(el('span','amt',x.refund_amount.toFixed(2)+' €'));rec.appendChild(rc);
-  if(x.internal_note)rec.appendChild(el('div','note','For the reviewer: '+x.internal_note));(r.guardrail_notes||[]).forEach(g=>rec.appendChild(el('div','note','Guardrail: '+g)));
-  if(r.reflection&&r.reflection.ok===false)rec.appendChild(el('div','note','The draft check revised the reply: '+(r.reflection.issues||[]).join('; ')));
+  const ac=el('div','achks');autoChecks(r).forEach(c=>ac.appendChild(el('span','achk '+(c.w?'w':'ok'),(c.w?'⚠ ':'✓ ')+c.t)));rec.appendChild(ac);
+  if(x.internal_note)rec.appendChild(nt('For the reviewer: '+x.internal_note));(r.guardrail_notes||[]).forEach(g=>rec.appendChild(nt('Guardrail: '+g)));
+  if(r.reflection&&r.reflection.ok===false)rec.appendChild(nt('The draft check revised the reply: '+(r.reflection.issues||[])[0]));
   drf.textContent='';drf.appendChild(el('h4','','Draft reply · editable'));const ta=el('textarea');ta.setAttribute('aria-label','Draft reply');drf.appendChild(ta);
   const full=x.draft_reply||'';
   if(instant||!full){ta.value=full}else{let i=0;ta.value='';typer=setInterval(()=>{i+=3;ta.value=full.slice(0,i);if(i>=full.length)clearInterval(typer)},8)}
@@ -348,20 +370,26 @@ function renderTicket(){const r=rowsOf().find(x=>x.ticket_id===sel);if(!r)return
   const alt=el('button','sec',esc?'Approve & send anyway':'Escalate to manager');alt.appendChild(el('kbd','',esc?'A':'E'));
   const st0=status[key()];if(st0){primary.disabled=true;alt.disabled=true;a.appendChild(el('span','hint',st0==='sent'?'Sent (simulation).':'Sent to manager (simulation).'))}
   primary.onclick=()=>act(esc?'escalated':'sent',ta,full);alt.onclick=()=>act(esc?'sent':'escalated',ta,full);a.appendChild(primary);a.appendChild(alt);drf.appendChild(a);
-  drf.appendChild(el('div','hint','Enter accepts the recommendation · A approve · E escalate · J / K move · nothing is really sent'));
+  drf.appendChild(el('div','hint','Enter accepts · A approve · E escalate · U undo · J / K move · nothing is really sent'));
   if($('#evaltog').checked){const e=el('div','evalbox');e.appendChild(el('div','','Evaluation label: expected '+(DEC[t.expected.decision]||t.expected.decision)+' · rules '+t.expected.rules.join(', ')));if(t.label_note)e.appendChild(el('div','',t.label_note));if((r.reply_flags||[]).length)e.appendChild(el('div','','Reply flags: '+r.reply_flags.join(', ')));Object.entries(r.score.checks).forEach(([k,v])=>e.appendChild(el('span','ck'+(v?'':' f'),(v?'✓ ':'✕ ')+(CHK[k]||k))));drf.appendChild(e)}}
  function skeleton(){rec.appendChild(el('h4','','Recommendation'));[60,90,40].forEach(w=>{const s=el('div','skel');s.style.width=w+'%';rec.appendChild(s)});drf.appendChild(el('h4','','Draft reply'));[100,95,90,60].forEach(w=>{const s=el('div','skel');s.style.width=w+'%';drf.appendChild(s)})}
  if(done){reveal(true)}else{skeleton();let i=0;nodes[0].className='ts run';timer=setInterval(()=>{nodes[i].className='ts ok';nodes[i].firstChild.textContent='✓';i++;if(i<nodes.length){nodes[i].className='ts run'}else{clearInterval(timer);processed[key()]=true;inbox();reveal(false)}},330)}}
-function act(kind,ta,orig){const k=key();status[k]=kind;edited[k]=ta.value.trim()!==orig.trim();
- toast(kind==='sent'?'Reply sent'+(edited[k]?' (edited)':'')+' · simulation':'Sent to manager · simulation');bar();inbox();
+function act(kind,ta,orig){const k=key();status[k]=kind;edited[k]=ta.value.trim()!==orig.trim();lastAct={k,id:sel};save();
+ toast(kind==='sent'?'Reply sent'+(edited[k]?' (edited)':'')+' · simulation':'Sent to manager · simulation','Undo (U)',undo);bar();inbox();
  const rs=rowsOf(),i=rs.findIndex(r=>r.ticket_id===sel),nx=rs.slice(i+1).concat(rs.slice(0,i)).find(r=>st(r)==='pending');
  if(nx){sel=nx.ticket_id;setTimeout(()=>{inbox();renderTicket();const it=document.querySelector('.it.on');if(it)it.scrollIntoView({block:'nearest'})},120)}else renderTicket()}
 addEventListener('keydown',e=>{if(!$('#v-platform').classList.contains('on'))return;const tg=e.target.tagName;if(tg==='TEXTAREA'||tg==='SELECT'||tg==='INPUT'||e.metaKey||e.ctrlKey)return;
  const rs=rowsOf(),i=rs.findIndex(r=>r.ticket_id===sel);
  if(e.key==='j'||e.key==='k'){const n=rs[Math.max(0,Math.min(rs.length-1,i+(e.key==='j'?1:-1)))];sel=n.ticket_id;inbox();renderTicket();const it=document.querySelector('.it.on');if(it)it.scrollIntoView({block:'nearest'})}
+ if(e.key==='u'){undo()}
  if(e.key==='Enter'){const b=document.querySelector('.acts .go');if(b&&!b.disabled){e.preventDefault();b.click()}}
  if(e.key==='a'||e.key==='e'){const b=[...document.querySelectorAll('.acts .go,.acts .sec')].filter(b=>!b.disabled).find(b=>b.textContent.endsWith(e.key.toUpperCase()));if(b)b.click()}});
 
 function boot(){const [k,o]=parseHash();if(o.e&&S[o.e])eng=o.e;if(o.t)sel=o.t;if(o.clean)document.body.classList.add('clean');if(o.z)document.body.style.zoom=o.z;if(o.ev)$('#evaltog').checked=true;if(o.anim){ANIM=true;$('#animtog').checked=true}go(k||'overview');if(o.sc)setTimeout(()=>{const t=document.getElementById(o.sc);if(t)t.scrollIntoView({block:'start'})},60)}
+const SELFTEST=location.hash.includes('selftest');
 boot();
+if(SELFTEST){try{const click=()=>document.querySelector('.acts .go').click();const n0=rowsOf().filter(r=>st(r)==='pending').length;
+ click();const n1=rowsOf().filter(r=>st(r)==='pending').length;undo();const n2=rowsOf().filter(r=>st(r)==='pending').length;
+ const chips=document.querySelectorAll('.achk').length,items=document.querySelectorAll('.it').length,noScroll=document.documentElement.scrollHeight<=innerHeight+2,dbg=[document.documentElement.scrollHeight,innerHeight,document.body.scrollHeight,Math.round($('#v-platform').getBoundingClientRect().bottom),Math.round(document.querySelector('main').getBoundingClientRect().bottom)];
+ document.title='SELFTEST '+JSON.stringify({pending_before:n0,after_approve:n1,after_undo:n2,chips,items,noScroll,dbg,saved:!!localStorage.getItem(LS)})}catch(e){document.title='SELFTEST ERROR '+e.message}}
 </script></body></html>
