@@ -228,10 +228,20 @@ ol.how{margin:0;padding-left:18px;color:var(--ink2);font-size:17.5px;line-height
  <div class="hero">
   <div class="forpill">For small online shops</div>
   <h1>Refund emails,<br>handled automatically.</h1>
-  <p class="sub">Drafts every reply to return and refund emails. You approve.</p>
+  <p class="sub">Customers email to return, cancel or get a refund. The agent finds the order, applies your returns policy and drafts the reply in their language. You review and approve with one key.</p>
   <div class="btns"><button class="btn p" onclick="go('platform')">Open the platform →</button><button class="btn" onclick="go('results')">See the results</button></div>
  </div>
  <div class="tiles" id="tiles"></div>
+ <div class="lab">How it works</div>
+ <div class="steps">
+  <div class="stp"><b>1</b><strong>Read</strong><span>Email, any language</span></div>
+  <div class="stp ai"><b>2</b><strong>Look up</strong><span>Order and day counts</span></div>
+  <div class="stp ai"><b>3</b><strong>Decide</strong><span>Policy rules R1–R9</span></div>
+  <div class="stp ai"><b>4</b><strong>Check</strong><span>Draft against facts</span></div>
+  <div class="stp"><b>5</b><strong>Review</strong><span>Staff approve or escalate</span></div>
+ </div>
+ <div class="lab">Controls</div>
+ <div class="chips"><span class="chip">Read-only tools</span><span class="chip">Identity check in code</span><span class="chip">Max 6 steps</span><span class="chip">Above 100 € → manager</span><span class="chip">Email = untrusted</span><span class="chip">Any failure → human</span></div>
 </section>
 
 <section class="view" id="v-results">
@@ -314,7 +324,7 @@ function parseHash(){const p=location.hash.slice(1).split('&'),o={};p.slice(1).f
 addEventListener('hashchange',()=>boot());
 
 const A=S.agent||S[ORDER[ORDER.length-1]];
-[(()=>{const k=Math.round(A.task_success*A.n)+(D.scale&&D.scale.systems.agent?D.scale.systems.agent.k:0),n=A.n+(D.scale&&D.scale.systems.agent?D.scale.systems.agent.n:0);return [pct(k/n),'Task success',n+' tickets']})(),[A.staff_minutes_per_ticket.toFixed(1)+' min','Staff time per ticket','↓ '+Math.round((1-A.staff_minutes_per_ticket/MAN)*100)+'% vs '+MAN.toFixed(1)+' min manual','pos'],['$'+A.all_in_cost_per_ticket_usd.toFixed(2),'Cost per ticket, all-in','↓ '+Math.round((1-A.all_in_cost_per_ticket_usd/S.manual.all_in_cost_per_ticket_usd)*100)+'% vs $'+S.manual.all_in_cost_per_ticket_usd.toFixed(2)+' manual','pos'],[A.latency_mean_s+' s','Machine time per ticket','']]
+[(()=>{const k=Math.round(A.task_success*A.n)+(D.scale&&D.scale.systems.agent?D.scale.systems.agent.k:0),n=A.n+(D.scale&&D.scale.systems.agent?D.scale.systems.agent.n:0);return [pct(k/n),'Task success',n+' tickets']})(),[A.staff_minutes_per_ticket.toFixed(1)+' min','Staff time per ticket','↓ '+Math.round((1-A.staff_minutes_per_ticket/MAN)*100)+'% vs '+MAN.toFixed(1)+' min manual','pos'],['$'+A.all_in_cost_per_ticket_usd.toFixed(2),'Cost per ticket, all-in','↓ '+Math.round((1-A.all_in_cost_per_ticket_usd/S.manual.all_in_cost_per_ticket_usd)*100)+'% vs $'+S.manual.all_in_cost_per_ticket_usd.toFixed(2)+' manual (staff at $'+S.manual.staff_usd_per_hour+'/h + model)','pos'],[A.latency_mean_s+' s','Machine time per ticket','mean, per draft']]
  .forEach(([v,l,s,c])=>{const t=el('div','tile');t.appendChild(el('div','l',l));t.appendChild(el('div','v',v));t.appendChild(el('div','s'+(c?' '+c:''),s));$('#tiles').appendChild(t)});
 
 const niceMax=v=>{if(v<=0)return 1;const e=Math.pow(10,Math.floor(Math.log10(v))),f=v/e,n=f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10;return n*e};
