@@ -87,7 +87,7 @@ h2{font-size:clamp(28px,3.6vw,40px);letter-spacing:-.03em;margin:0 0 6px;font-we
 .heat{overflow-x:auto;padding-bottom:6px}.hg{display:grid;gap:3px;align-items:center;min-width:760px}
 .hh{font-size:10.5px;color:var(--mute);text-align:center}.hn{font-size:13px;color:var(--ink2);padding-right:8px;white-space:nowrap}.hn.em{color:var(--ink);font-weight:650}
 .cell{height:24px;border-radius:5px;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800;cursor:pointer;border:0;transition:transform .12s}
-.cell:hover{transform:scale(1.18)}.cell.p{background:var(--good)}.cell.f{background:var(--bad)}
+.cell:hover{transform:scale(1.18)}.cell.p{background:var(--good)}.cell.f{background:var(--bad)}.cell.a{background:#d98f00}
 .legend{display:flex;gap:16px;color:var(--mute);font-size:13px;margin-top:12px;align-items:center}.legend i{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:4px;color:#fff;font-size:10px;font-style:normal;font-weight:800;margin-right:6px;vertical-align:-3px}
 details{margin-top:16px}summary{cursor:pointer;color:var(--ink2);font-weight:600;font-size:14px}
 .tw{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
@@ -249,7 +249,7 @@ ol.how{margin:0;padding-left:18px;color:var(--ink2);font-size:14.5px;line-height
   <div class="card full" id="scalecard"><h3 id="scale-h">Scale test</h3><div class="cs" id="scale-s"></div><div id="c-scale"></div><div id="scale-extra"></div></div>
   <div class="card full" id="heatcard"><h3>Where each system fails</h3><div class="cs">One cell per ticket. Hover for the failed checks; click to open the ticket in the platform.</div>
    <div class="heat"><div class="hg" id="heat"></div></div>
-   <div class="legend"><span><i style="background:var(--good)">✓</i>All checks passed</span><span><i style="background:var(--bad)">✕</i>At least one check failed</span></div></div>
+   <div class="legend"><span><i style="background:var(--good)">✓</i>All checks passed</span><span><i style="background:var(--bad)">✕</i>At least one check failed</span><span><i style="background:#d98f00">?</i>Ambiguous label (hover)</span></div></div>
  </div>
  <details><summary>Table view</summary><div class="tw"><table id="restable"></table></div></details>
 </section>
@@ -396,11 +396,13 @@ function takeaways(){const T=$('#take');T.textContent='';const llm=ORDER.filter(
  if(S.agent&&S.b1_access){items.push(['The gap is staff time','Modelled '+S.agent.staff_minutes_per_ticket.toFixed(1)+' min with the agent vs '+S.b1_access.staff_minutes_per_ticket.toFixed(1)+' min pasting by hand. It rests on an assumed 2.5 min manual lookup.']);
   items.push(['Model cost is small next to staff time','Tokens: $'+(S.agent.cost_per_ticket_usd*1000).toFixed(2)+' per 1,000 tickets ('+(S.agent.cost_per_ticket_usd/S.b1_access.cost_per_ticket_usd).toFixed(1)+'× paste). Staff time at $'+S.manual.staff_usd_per_hour+'/h: $'+(S.agent.staff_cost_per_ticket_usd*1000).toFixed(0)+' vs $'+Math.round(S.b1_access.staff_cost_per_ticket_usd*1000).toLocaleString('en-US')+' pasting. An assumption.'])}
  items.forEach(([h,t])=>{const c=el('div','card');c.appendChild(el('b','',h));c.appendChild(el('span','',t));T.appendChild(c)})}
+function plausible(id,dec){const p=D.probes&&D.probes[id];if(!p)return false;const ok=new Set([p.expected]);Object.values(p.decisions).forEach(d=>Object.keys(d).forEach(k=>ok.add(k)));return ok.has(dec)}
+function probeText(id){const p=D.probes&&D.probes[id];if(!p)return D.tickets[id].label_note||'';const f=d=>Object.entries(d).map(([k,v])=>v+'× '+k).join(', '),n={agent:'Agent + check',agent_no_reflection:'Agent, no check',b1_access:'Paste'};return 'In '+p.runs+' replays: '+Object.entries(p.decisions).map(([k,d])=>n[k]+' '+f(d)).join('; ')+'. The label says '+p.expected+'.'}
 function heat(){const H=$('#heat');H.textContent='';const ids=[...new Set(D.rows.map(r=>r.ticket_id))].sort();H.style.gridTemplateColumns='128px repeat('+ids.length+',1fr)';
  H.appendChild(el('div'));ids.forEach(i=>H.appendChild(el('div','hh',String(+i.slice(1)))));
  ORDER.forEach(s=>{H.appendChild(el('div','hn'+(s==='agent'?' em':''),SHORT[s]));
-  ids.forEach(id=>{const r=D.rows.find(x=>x.system===s&&x.ticket_id===id);if(!r){H.appendChild(el('div'));return}const c=el('button','cell '+(r.score.success?'p':'f'),r.score.success?'✓':'✕');
-   tip(c,id+' · '+D.tickets[id].subject+(r.score.success?': all checks passed':': failed '+r.score.failed.map(k=>CHK[k]||k).join(', '))+(D.tickets[id].label_note?' · '+D.tickets[id].label_note:''));
+  ids.forEach(id=>{const r=D.rows.find(x=>x.system===s&&x.ticket_id===id);if(!r){H.appendChild(el('div'));return}const amb=!r.score.success&&D.tickets[id].label_note&&plausible(id,r.result.decision),c=el('button','cell '+(r.score.success?'p':amb?'a':'f'),r.score.success?'✓':amb?'?':'✕');
+   tip(c,id+' · '+D.tickets[id].subject+(r.score.success?': all checks passed':': failed '+r.score.failed.map(k=>CHK[k]||k).join(', '))+(amb?' · Ambiguous label. '+probeText(id):''));
    c.onclick=()=>{eng=s;sel=id;go('platform')};H.appendChild(c)})});
  const tb=$('#restable');tb.textContent='';const hr=el('tr');['System','Task success','95% interval','Decision acc.','Wrong-money','Reply flags','Latency mean / p95','Model $ / ticket','All-in $ / ticket','Staff min'].forEach(h=>hr.appendChild(el('th','',h)));tb.appendChild(hr);
  ORDER.forEach(s=>{const m=S[s],r=el('tr');[NAME[s],pct(m.task_success),pct(m.task_success_ci95[0])+' – '+pct(m.task_success_ci95[1]),pct(m.decision_accuracy),m.wrong_money_decisions,m.reply_flag_tickets,m.latency_mean_s+' / '+m.latency_p95_s+' s','$'+m.cost_per_ticket_usd.toFixed(5),'$'+m.all_in_cost_per_ticket_usd.toFixed(3),m.staff_minutes_per_ticket.toFixed(2)].forEach(v=>r.appendChild(el('td','',String(v))));tb.appendChild(r)})}
@@ -605,6 +607,9 @@ def build(run: Path, out: Path, video: Path | None, repeat: Path | None = None, 
     if repeat:
         data["repeat"] = repeat_stats(repeat)
     data["scale_planned"] = len(load_tickets(scale=True))
+    probes = ROOT / "data" / "label_probes.json"
+    if probes.exists():
+        data["probes"] = json.loads(probes.read_text())
     if scale:
         data["scale"] = scale_stats(scale)
     (out / "data").mkdir(parents=True, exist_ok=True)

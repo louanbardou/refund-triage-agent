@@ -1,0 +1,19 @@
+{
+ "T30": {
+  "runs": 8,
+  "expected": "reject",
+  "decisions": {
+   "agent": {
+    "reject": 1,
+    "escalate": 7
+   },
+   "agent_no_reflection": {
+    "escalate": 7,
+    "reject": 1
+   },
+   "b1_access": {
+    "escalate": 8
+   }
+  }
+ }
+}
