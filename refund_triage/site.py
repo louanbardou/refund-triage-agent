@@ -231,6 +231,7 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
   <div class="card"><h3>Staff time per ticket</h3><div class="cs">Minutes, modelled from assumed step times.</div><div id="c-time"></div></div>
   <div class="card"><h3>Cost per 1,000 tickets, all-in</h3><div class="cs">US dollars: staff time at an assumed $25/h plus model tokens.</div><div id="c-cost"></div></div>
   <div class="card"><h3>Machine time per ticket</h3><div class="cs">Seconds the model takes to produce a draft; mean over tickets.</div><div id="c-lat"></div></div>
+  <div class="card full" id="scalecard"><h3 id="scale-h">Scale test</h3><div class="cs" id="scale-s"></div><div id="c-scale"></div><div id="scale-extra"></div></div>
   <div class="card full" id="heatcard"><h3>Where each system fails</h3><div class="cs">One cell per ticket. Hover for the failed checks; click to open the ticket in the platform.</div>
    <div class="heat"><div class="hg" id="heat"></div></div>
    <div class="legend"><span><i style="background:var(--good)">✓</i>All checks passed</span><span><i style="background:var(--bad)">✕</i>At least one check failed</span></div></div>
@@ -317,7 +318,7 @@ function parseHash(){const p=location.hash.slice(1).split('&'),o={};p.slice(1).f
 addEventListener('hashchange',()=>boot());
 
 const A=S.agent||S[ORDER[ORDER.length-1]];
-[[pct(A.task_success),'Task success',D.summary._meta.n_tickets+' tickets'],[A.staff_minutes_per_ticket.toFixed(1)+' min','Staff time per ticket','↓ '+Math.round((1-A.staff_minutes_per_ticket/MAN)*100)+'% vs '+MAN.toFixed(1)+' min manual (modelled)','pos'],['$'+A.all_in_cost_per_ticket_usd.toFixed(2),'Cost per ticket, all-in','↓ '+Math.round((1-A.all_in_cost_per_ticket_usd/S.manual.all_in_cost_per_ticket_usd)*100)+'% vs $'+S.manual.all_in_cost_per_ticket_usd.toFixed(2)+' manual (staff at $'+S.manual.staff_usd_per_hour+'/h + model)','pos'],[A.latency_mean_s+' s','Machine time per ticket','mean, per draft']]
+[[pct(A.task_success),'Task success',D.summary._meta.n_tickets+' curated tickets'+(D.scale?' + '+D.scale.n+'-ticket scale test':' · '+D.scale_planned+'-ticket scale test running')],[A.staff_minutes_per_ticket.toFixed(1)+' min','Staff time per ticket','↓ '+Math.round((1-A.staff_minutes_per_ticket/MAN)*100)+'% vs '+MAN.toFixed(1)+' min manual (modelled)','pos'],['$'+A.all_in_cost_per_ticket_usd.toFixed(2),'Cost per ticket, all-in','↓ '+Math.round((1-A.all_in_cost_per_ticket_usd/S.manual.all_in_cost_per_ticket_usd)*100)+'% vs $'+S.manual.all_in_cost_per_ticket_usd.toFixed(2)+' manual (staff at $'+S.manual.staff_usd_per_hour+'/h + model)','pos'],[A.latency_mean_s+' s','Machine time per ticket','mean, per draft']]
  .forEach(([v,l,s,c])=>{const t=el('div','tile');t.appendChild(el('div','l',l));t.appendChild(el('div','v',v));t.appendChild(el('div','s'+(c?' '+c:''),s));$('#tiles').appendChild(t)});
 
 const niceMax=v=>{if(v<=0)return 1;const e=Math.pow(10,Math.floor(Math.log10(v))),f=v/e,n=f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10;return n*e};
@@ -340,8 +341,17 @@ function drawResults(){
  hbar($('#c-cost'),ci,niceMax(S.manual.all_in_cost_per_ticket_usd*1000*1.05),v=>'$'+Math.round(v).toLocaleString('en-US'));
  const lm=Math.max(...ORDER.map(s=>S[s].latency_p95_s),.5);
  hbar($('#c-lat'),it(m=>({value:m.latency_mean_s,text:m.latency_mean_s.toFixed(1)+' s',tip:'Mean '+m.latency_mean_s+' s, 95th percentile '+m.latency_p95_s+' s'})),niceMax(lm*1.05),v=>v.toFixed(v%1?1:0)+'s');
- takeaways();heat();
+ takeaways();scaleCard();heat();
 }
+function scaleCard(){const sc=D.scale,h=$('#scale-h'),sub=$('#scale-s'),box=$('#c-scale'),ex=$('#scale-extra');box.textContent='';ex.textContent='';
+ if(!sc){h.textContent='Scale test · '+D.scale_planned+' generated tickets';sub.textContent='Four languages, every policy rule and every boundary day. Running now: results appear here as soon as the run is finished and checked.';return}
+ h.textContent='Scale test · '+sc.n+' generated tickets';sub.textContent='Labels from the rule-based oracle; four languages, all rules, boundary days. Whiskers: 95% interval.';
+ const nm={b0_templates:'B0 templates',b1_access:'B1 paste',agent:'Agent + check'},ord=['b0_templates','b1_access','agent'].filter(k=>sc.systems[k]);
+ hbar(box,ord.map(k=>{const d=sc.systems[k];return {label:nm[k],color:k==='agent'?GREEN:GRAY,em:k==='agent',value:d.k/d.n,lo:d.ci95[0],hi:d.ci95[1],text:pct(d.k/d.n),tip:d.k+' of '+d.n+' tickets passed every check'}}),1,v=>Math.round(v*100)+'%');
+ const bad=sc.scenarios.filter(r=>(r.agent!==undefined&&r.agent<r.n)||(r.b1_access!==undefined&&r.b1_access<r.n)).sort((a,b)=>(a.agent-a.n)-(b.agent-b.n)).slice(0,6);
+ if(bad.length){const t=el('table');t.style.minWidth='0';const hr=el('tr');['Scenario with misses','Tickets','Agent','B1 paste'].forEach(x=>hr.appendChild(el('th','',x)));t.appendChild(hr);
+  bad.forEach(r=>{const q=el('tr');[r.tag.replace(/_/g,' '),r.n,r.agent+'/'+r.n,r.b1_access+'/'+r.n].forEach(v=>q.appendChild(el('td','',String(v))));t.appendChild(q)});const w=el('div','tw');w.appendChild(t);ex.appendChild(w)}
+ else ex.appendChild(el('div','note','No misses for the agent or B1 in any scenario.'))}
 function takeaways(){const T=$('#take');T.textContent='';const llm=ORDER.filter(s=>s!=='b0_templates');if(!llm.length)return;
  const ks=llm.map(s=>Math.round(S[s].task_success*S[s].n)),n=S[llm[0]].n,lo=Math.min(...ks),hi=Math.max(...ks);
  const items=[['Accuracy is at the ceiling','Every model system passes '+(lo===hi?lo:lo+'–'+hi)+' of '+n+' tickets, so these checks cannot rank them.'+(D.repeat?' Decisions were identical across '+D.repeat.runs+' repeated runs.':'')]];
@@ -470,12 +480,46 @@ def repeat_stats(rep: Path) -> dict:
     return out
 
 
+def scale_stats(run: Path) -> dict:
+    """Aggregate a scale-test run: success per system and per scenario tag (labels come from the oracle)."""
+    from .scoring import score, wilson
+    tickets = {t["ticket_id"]: t for t in load_tickets(scale=True)}
+    recs = [json.loads(line) for line in (run / "records.jsonl").read_text().splitlines()]
+    sm = json.loads((run / "summary.json").read_text())
+    systems, scen = {}, {}
+    for r in recs:
+        t = tickets[r["ticket_id"]]
+        ok = score(t, r)["success"]
+        d = systems.setdefault(r["system"], {"k": 0, "n": 0})
+        d["k"] += ok; d["n"] += 1
+        tag = t["tags"][0]
+        c = scen.setdefault(tag, {"n": 0})
+        c["n"] += r["system"] == "agent"
+        c[r["system"]] = c.get(r["system"], 0) + ok
+    for name, d in systems.items():
+        d["ci95"] = wilson(d["k"], d["n"])
+        m = sm.get(name, {})
+        d["latency_mean_s"] = m.get("latency_mean_s"); d["cost_per_ticket_usd"] = m.get("cost_per_ticket_usd")
+        d["errors"] = m.get("errors")
+    langs = {}
+    for r in recs:
+        if r["system"] == "agent":
+            t = tickets[r["ticket_id"]]
+            l = langs.setdefault(t["language"], [0, 0]); l[0] += score(t, r)["success"]; l[1] += 1
+    evaluated = len({r["ticket_id"] for r in recs})   # tickets actually run, not tickets generated
+    return {"n": evaluated, "generated": len(tickets), "systems": systems, "languages": langs,
+            "scenarios": [dict(tag=k, **v) for k, v in sorted(scen.items(), key=lambda kv: kv[0])]}
+
+
 def build(run: Path, out: Path, video: Path | None, repeat: Path | None = None, scale: Path | None = None) -> None:
     summary = json.loads((run / "summary.json").read_text())
     records = [json.loads(line) for line in (run / "records.jsonl").read_text().splitlines()]
     data = build_data(load_tickets(), records, summary)
     if repeat:
         data["repeat"] = repeat_stats(repeat)
+    data["scale_planned"] = len(load_tickets(scale=True))
+    if scale:
+        data["scale"] = scale_stats(scale)
     (out / "data").mkdir(parents=True, exist_ok=True)
     (out / "data" / "results.json").write_text(json.dumps(data, ensure_ascii=False))
     if video and video.exists():
@@ -495,8 +539,9 @@ def main():
     ap.add_argument("--out", default=str(ROOT / "docs"))
     ap.add_argument("--video", default="")
     ap.add_argument("--repeat", default="", help="a results/<run> made with --repeats, for the stability note")
+    ap.add_argument("--scale", default="", help="a finished results/<run> on the generated scale set")
     a = ap.parse_args()
-    build(Path(a.run), Path(a.out), Path(a.video) if a.video else None, Path(a.repeat) if a.repeat else None)
+    build(Path(a.run), Path(a.out), Path(a.video) if a.video else None, Path(a.repeat) if a.repeat else None, Path(a.scale) if a.scale else None)
     print(f"site written to {a.out}")
 
 
