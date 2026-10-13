@@ -133,9 +133,9 @@ select{font:inherit;font-size:13.5px;padding:7px 10px;border-radius:10px;border:
 .note{margin-top:8px;color:var(--ink2);font-size:13.5px;background:var(--soft);border-radius:10px;padding:9px 12px}
 textarea{width:100%;min-height:230px;resize:vertical;border:1px solid var(--line);border-radius:12px;padding:14px;font:14.5px/1.6 system-ui,sans-serif;color:var(--ink);background:#fff}
 textarea:focus{outline:2px solid var(--acc);outline-offset:1px}
-.acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px;max-width:100%}
 .go{border:0;background:var(--acc);color:#fff;padding:12px 20px;border-radius:12px;font-weight:650;cursor:pointer;font-size:15px}.go:hover{filter:brightness(1.07);transform:translateY(-1px)}
-.go.vio{background:var(--d-escalate)}.go:disabled,.sec:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.go.vio{background:var(--d-escalate)}.go:disabled,.sec:disabled{opacity:.55;cursor:not-allowed;transform:none}
 .sec{border:1px solid var(--line);background:var(--card);padding:12px 18px;border-radius:12px;font-weight:600;cursor:pointer}
 kbd{font:11.5px ui-monospace,Menlo,monospace;background:rgba(0,0,0,.08);border-radius:5px;padding:0 5px;margin-left:8px}
 .sec kbd{background:var(--soft)}
@@ -178,7 +178,7 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
  .mail{font-size:13.5px;line-height:1.5}.fact{padding:8px 12px;margin-bottom:6px}.fr{font-size:13px;padding:1px 0}.rule{font-size:12.5px;padding:4px 0}
  .rec .big,.amt{font-size:19px}.note{font-size:12.5px;padding:6px 10px;margin-top:6px}
  textarea{flex:1;min-height:80px;height:auto;resize:none;font-size:14px;line-height:1.5;padding:12px}
- .acts{margin-top:8px;flex-wrap:nowrap}.acts .go,.acts .sec{flex:1 1 0;min-width:0;padding:10px 8px;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hint{font-size:12px;margin-top:6px}
+ .acts{margin-top:8px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;width:100%}.acts .hint{grid-column:1/-1}.acts .go,.acts .sec{width:100%;min-width:0;padding:10px 8px;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;justify-content:center;gap:8px}.acts kbd{margin-left:0;flex:none}.hint{font-size:12px;margin-top:6px}
 }
 @media (min-width:901px) and (max-height:760px){.note{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.mail{font-size:13px}.colL .pn:first-child{max-height:34%}.hint{display:none}.rec .big,.amt{font-size:17px}}
 .note.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}.note.clamp.open{display:block}
@@ -385,7 +385,7 @@ function renderTicket(){const r=rowsOf().find(x=>x.ticket_id===sel);if(!r)return
   ta.onfocus=()=>{clearInterval(typer);if(ta.value.length<full.length&&full.startsWith(ta.value))ta.value=full};
   const a=el('div','acts');const esc=x.decision==='escalate';
   const primary=el('button','go'+(esc?' vio':''),esc?'Send to manager':'Approve & send');primary.appendChild(el('kbd','',esc?'E':'A'));
-  const alt=el('button','sec',esc?'Approve & send anyway':'Escalate to manager');alt.appendChild(el('kbd','',esc?'A':'E'));
+  const alt=el('button','sec',esc?'Approve anyway':'Escalate');alt.appendChild(el('kbd','',esc?'A':'E'));
   const st0=status[key()];if(st0){primary.disabled=true;alt.disabled=true;a.appendChild(el('span','hint',st0==='sent'?'Sent (simulation).':'Sent to manager (simulation).'))}
   primary.onclick=()=>act(esc?'escalated':'sent',ta,full);alt.onclick=()=>act(esc?'sent':'escalated',ta,full);a.appendChild(primary);a.appendChild(alt);drf.appendChild(a);
   drf.appendChild(el('div','hint','Enter accepts · A approve · E escalate · U undo · J / K move · nothing is really sent'));
@@ -408,8 +408,8 @@ const SELFTEST=location.hash.includes('selftest');
 boot();
 if(SELFTEST){try{const click=()=>document.querySelector('.acts .go').click();const n0=rowsOf().filter(r=>st(r)==='pending').length;
  click();const n1=rowsOf().filter(r=>st(r)==='pending').length;undo();const n2=rowsOf().filter(r=>st(r)==='pending').length;
- const chips=document.querySelectorAll('.achk').length,items=document.querySelectorAll('.it').length,noScroll=document.documentElement.scrollHeight<=innerHeight+2,dbg=[document.documentElement.scrollHeight,innerHeight,document.body.scrollHeight,Math.round($('#v-platform').getBoundingClientRect().bottom),Math.round(document.querySelector('main').getBoundingClientRect().bottom)];
- document.title='SELFTEST '+JSON.stringify({pending_before:n0,after_approve:n1,after_undo:n2,chips,items,noScroll,dbg,saved:!!localStorage.getItem(LS)})}catch(e){document.title='SELFTEST ERROR '+e.message}}
+ const ac=document.querySelector('.acts'),apr=ac.getBoundingClientRect(),actsFit=[...ac.children].every(c=>c.getBoundingClientRect().right<=apr.right+1),chips=document.querySelectorAll('.achk').length,items=document.querySelectorAll('.it').length,noScroll=document.documentElement.scrollHeight<=innerHeight+2;
+ document.title='SELFTEST '+JSON.stringify({pending_before:n0,after_approve:n1,after_undo:n2,chips,items,noScroll,actsFit,saved:!!localStorage.getItem(LS)})}catch(e){document.title='SELFTEST ERROR '+e.message}}
 </script></body></html>
 """
 
