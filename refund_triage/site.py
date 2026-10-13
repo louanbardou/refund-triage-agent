@@ -168,6 +168,7 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
  .ftabs{padding:7px 8px;flex:none}.ft{padding:4px 10px;font-size:12.5px}
  .ilist{flex:1;min-height:0;max-height:none;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(16,minmax(26px,1fr));grid-auto-flow:column;align-content:start}
  .it{padding:0 9px;border-right:1px solid var(--line)}
+ .ilist.one{grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-auto-flow:row;grid-auto-rows:36px}.ilist.one .it{border-right:0}
  .work{height:100%;min-height:0;gap:10px}
  .tl{flex:none;padding:6px 12px;border-radius:12px}.ts{padding:2px 10px;font-size:12.5px}
  .cols{flex:1;min-height:0;grid-template-columns:1fr 1.15fr;gap:10px;grid-template-rows:minmax(0,1fr)}
@@ -186,6 +187,17 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
 .achk.ok{color:#13804e;border-color:#bfe3cf;background:#f1faf5}.achk.w{color:#8a5a00;border-color:#e8c985;background:#fff8e6;font-weight:650}
 .att{color:#b36b00;font-weight:800;font-size:12px;flex:none}
 .tbtn{margin-left:14px;border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:4px 11px;cursor:pointer;font-weight:650}.toast.on{pointer-events:auto}
+.team{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:6px}
+.person{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--sh)}
+.av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:750;font-size:16px;margin-bottom:12px;background:linear-gradient(135deg,#9a7cff,#3b82e6)}
+.av.g{background:linear-gradient(135deg,#1a9e62,#6fd1a3)}.av.o{background:linear-gradient(135deg,#f59e0b,#f97316)}.av.k{background:linear-gradient(135deg,#475569,#94a3b8)}
+.person b{display:block;font-size:16px}.person .role{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:700;margin:2px 0 8px}.person span.d{color:var(--ink2);font-size:13.5px}
+.why{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.why .card{padding:18px 20px}.why b{display:block;margin-bottom:3px}.why span{color:var(--ink2);font-size:13.5px}
+.tline{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.tline li{display:grid;grid-template-columns:34px 1fr;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;box-shadow:var(--sh);align-items:start}
+.tline .n{width:30px;height:30px;border-radius:50%;background:var(--acc-soft);color:var(--acc);display:grid;place-items:center;font-weight:750;font-size:13px}
+.tline b{display:block;font-size:15px}.tline .p{color:var(--ink2);font-size:13.5px}.tline .f{color:#13804e;font-size:13.5px;font-weight:600;margin-top:2px}
+@media (max-width:900px){.team{grid-template-columns:1fr 1fr}.why{grid-template-columns:1fr}}
 </style></head><body>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <nav><div class="wrap"><div class="logo" onclick="go('overview')"><svg class="mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a7cff"/><stop offset="1" stop-color="#3b82e6"/></linearGradient></defs><circle cx="16" cy="16" r="16" fill="url(#lg)"/><rect x="6.8" y="10.6" width="17.4" height="12" rx="2.4" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M7.6 11.9l7.9 5.6 7.9-5.6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23.6" cy="22.6" r="5.3" fill="#1a9e62" stroke="#fff" stroke-width="1.6"/><path d="M21.2 22.7l1.8 1.8 3.2-3.5" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Refund Triage</div>
@@ -228,13 +240,39 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
 
 <section class="view" id="v-platform">
  <div class="pbar"><div class="bar" id="statbar"></div>
-  <label class="tog"><input type="checkbox" id="animtog"> Animate agent</label>
-  <label class="tog"><input type="checkbox" id="evaltog"> Evaluation labels</label>
   <select id="eng" aria-label="Engine"></select></div>
  <div class="app"><div class="inbox"><div class="ftabs" id="ftabs"></div><div class="ilist" id="ilist"></div></div><div class="work" id="work"></div></div>
 </section>
 
 <section class="view" id="v-video"><h2>Demo video</h2><p class="sub">Narration is synthetic (text to speech).</p>__VIDEO__</section>
+
+<section class="view" id="v-about">
+ <h2>Who we are</h2><p class="sub">A one-person course project with an AI team.</p>
+ <div class="team">
+  <div class="person"><div class="av">LB</div><b>Louan Bardou</b><div class="role">Author</div><span class="d">MSc Data Science and AI for Business, HEC Paris. Set the brief and made the calls.</span></div>
+  <div class="person"><div class="av k">CC</div><b>Claude Code</b><div class="role">Builder</div><span class="d">Wrote the prototype, the tests, this site and the demo video.</span></div>
+  <div class="person"><div class="av g">H</div><b>Claude Haiku 5.5</b><div class="role">The agent's model</div><span class="d">Reads each email and drafts the reply, for about $0.001 a ticket.</span></div>
+  <div class="person"><div class="av o">V</div><b>Fresh reviewers</b><div class="role">Verifiers</div><span class="d">Independent agents that audited scoring and results. They found real defects, twice.</span></div>
+ </div>
+ <div class="lab">Why this problem</div>
+ <div class="why">
+  <div class="card"><b>It repeats</b><span>Same questions, same rules, several languages.</span></div>
+  <div class="card"><b>It has a right answer</b><span>A written policy gives every ticket a label we can check.</span></div>
+  <div class="card"><b>A person must stay in charge</b><span>Money and exceptions need approval, so the control points are concrete.</span></div>
+ </div>
+ <p class="note" style="color:var(--mute);font-size:13.5px;margin:12px 0 0">The class example was hotel emails. We chose a workflow with an order lookup, so the agent has real work to do.</p>
+ <div class="lab">Problems we ran into</div>
+ <ol class="tline">
+  <li><span class="n">1</span><div><b>Good replies were marked wrong</b><div class="p">Our first regex scoring failed correct replies.</div><div class="f">→ Fixed after reading each reply. The first scores are kept.</div></div></li>
+  <li><span class="n">2</span><div><b>The test was too easy</b><div class="p">Every model system scored 100% on the first 20 tickets.</div><div class="f">→ Added 11 harder tickets and a generated 500-ticket scale test.</div></div></li>
+  <li><span class="n">3</span><div><b>A reviewer found what we missed</b><div class="p">A wrong p95 latency, an invented "original packaging", a "we have cancelled" claim.</div><div class="f">→ Fixed the latency maths and added reply-quality flags.</div></div></li>
+  <li><span class="n">4</span><div><b>One label is ambiguous</b><div class="p">Ticket T30, a claimed phone authorisation: reject or escalate?</div><div class="f">→ Kept the original label and said so.</div></div></li>
+  <li><span class="n">5</span><div><b>The cost chart told half the story</b><div class="p">Counting tokens only made the agent look more expensive.</div><div class="f">→ Added the all-in cost with staff time at an assumed $25/h. Token cost stays visible.</div></div></li>
+  <li><span class="n">6</span><div><b>The first platform needed scrolling</b><div class="p">Too slow for reviewing tickets in a row.</div><div class="f">→ One-screen layout, automatic checks, undo and keyboard keys.</div></div></li>
+ </ol>
+ <div class="lab">What we learned</div>
+ <div class="chips"><span class="chip">Accuracy did not separate the systems; staff time and wording did</span><span class="chip">Numbers that rest on assumptions say so</span><span class="chip">An independent review beats a self-review</span></div>
+</section>
 
 <section class="view" id="v-run">
  <h2>Run it</h2><p class="sub">Python 3.10+ and <code>pip install anthropic</code>. Tests and the template baseline need no key.</p>
@@ -272,7 +310,7 @@ const tipEl=el('div','tip');document.body.appendChild(tipEl);
 function tip(n,t){n.addEventListener('mousemove',e=>{tipEl.textContent=t;tipEl.style.display='block';tipEl.style.left=Math.min(e.clientX+14,innerWidth-270)+'px';tipEl.style.top=(e.clientY+16)+'px'});n.addEventListener('mouseleave',()=>tipEl.style.display='none');n.setAttribute('aria-label',t)}
 let tt;function toast(m,a,fn){const t=$('#toast');t.textContent=m;if(a){const b=el('button','tbtn',a);b.onclick=()=>{fn();t.classList.remove('on')};t.appendChild(b)}t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),a?5000:2200)}
 
-const VIEWS=[['overview','Overview'],['results','Results'],['platform','Platform'],['video','Video'],['run','Run it']];
+const VIEWS=[['overview','Overview'],['results','Results'],['platform','Platform'],['video','Video'],['about','Who we are'],['run','Run it']];
 const tabs=$('#tabs');VIEWS.forEach(([k,l])=>{const b=el('button','tab',l);b.id='tab-'+k;b.onclick=()=>go(k);tabs.appendChild(b)});
 function go(k){if(!VIEWS.find(v=>v[0]===k))k='overview';VIEWS.forEach(([v])=>{$('#v-'+v).classList.toggle('on',v===k);$('#tab-'+v).classList.toggle('on',v===k)});history.replaceState(null,'','#'+k);scrollTo({top:0});if(k==='platform')renderPlatform();if(k==='results')drawResults()}
 function parseHash(){const p=location.hash.slice(1).split('&'),o={};p.slice(1).forEach(x=>{const [a,b]=x.split('=');o[a]=b});return [p[0],o]}
@@ -319,13 +357,13 @@ function heat(){const H=$('#heat');H.textContent='';const ids=[...new Set(D.rows
  const tb=$('#restable');tb.textContent='';const hr=el('tr');['System','Task success','95% interval','Decision acc.','Wrong-money','Reply flags','Latency mean / p95','Model $ / ticket','All-in $ / ticket','Staff min'].forEach(h=>hr.appendChild(el('th','',h)));tb.appendChild(hr);
  ORDER.forEach(s=>{const m=S[s],r=el('tr');[NAME[s],pct(m.task_success),pct(m.task_success_ci95[0])+' – '+pct(m.task_success_ci95[1]),pct(m.decision_accuracy),m.wrong_money_decisions,m.reply_flag_tickets,m.latency_mean_s+' / '+m.latency_p95_s+' s','$'+m.cost_per_ticket_usd.toFixed(5),'$'+m.all_in_cost_per_ticket_usd.toFixed(3),m.staff_minutes_per_ticket.toFixed(2)].forEach(v=>r.appendChild(el('td','',String(v))));tb.appendChild(r)})}
 
-let eng=S.agent?'agent':ORDER[0],sel=null,filter='all',timer=null,typer=null,ANIM=false,forceAnim=false;
+let eng=S.agent?'agent':ORDER[0],sel=null,filter='all',timer=null,typer=null,ANIM=true,forceAnim=false,skipFn=null;
 const status={},processed={},edited={};
 const key=()=>eng+'|'+sel;
 const rowsOf=()=>D.rows.filter(r=>r.system===eng).sort((a,b)=>a.ticket_id<b.ticket_id?-1:1);
 const st=r=>status[eng+'|'+r.ticket_id]||'pending';
 const engSel=$('#eng');ORDER.forEach(s=>{const o=el('option','',SHORT[s]);o.value=s;engSel.appendChild(o)});engSel.onchange=()=>{eng=engSel.value;sel=null;renderPlatform()};
-$('#evaltog').onchange=()=>{if(sel)renderTicket()};$('#animtog').onchange=()=>{ANIM=$('#animtog').checked};
+
 const LS='rt-review-v1';let lastAct=null;
 try{const j=JSON.parse(localStorage.getItem(LS)||'{}');Object.assign(status,j.status||{});Object.assign(edited,j.edited||{})}catch(e){}
 function save(){try{localStorage.setItem(LS,JSON.stringify({status,edited}))}catch(e){}}
@@ -345,7 +383,7 @@ function bar(){const rs=rowsOf(),n=rs.length,sent=rs.filter(r=>st(r)==='sent').l
  const saved=rs.reduce((a,r)=>a+(st(r)==='sent'?MAN-(edited[eng+'|'+r.ticket_id]?2.5:1.0):0),0);
  const B=$('#statbar');B.textContent='';[['Pending',n-sent-esc],['Sent',sent],['Escalated',esc],['Edited',ed],['Time saved',saved.toFixed(1)+' min']].forEach(([k,v])=>{const d=el('div');d.appendChild(el('div','k',k));d.appendChild(el('div','n',String(v)));B.appendChild(d)});
  const p=el('div','prog');const i=el('i');i.style.width=((sent+esc)/n*100)+'%';p.appendChild(i);B.appendChild(p)}
-function inbox(){const L=$('#ilist');L.textContent='';const F=$('#ftabs');F.textContent='';
+function inbox(){const L=$('#ilist');L.textContent='';L.classList.toggle('one',filter!=='all');const F=$('#ftabs');F.textContent='';
  [['all','All'],['pending','Pending'],['mgr','Manager'],['done','Done']].forEach(([k,l])=>{const b=el('button','ft'+(filter===k?' on':''),l);b.onclick=()=>{filter=k;inbox()};F.appendChild(b)});
  const rs=rowsOf().filter(r=>filter==='all'||(filter==='pending'&&st(r)==='pending')||(filter==='mgr'&&r.result.decision==='escalate')||(filter==='done'&&st(r)!=='pending'));
  rs.forEach(r=>{const b=el('button','it'+(r.ticket_id===sel?' on':'')+(st(r)!=='pending'?' done':''));b.title=r.ticket_id+' · '+D.tickets[r.ticket_id].subject+' · '+D.tickets[r.ticket_id].from_email;
@@ -373,25 +411,27 @@ function renderTicket(){const r=rowsOf().find(x=>x.ticket_id===sel);if(!r)return
  const l2=el('div','colL');l2.appendChild(left);l2.appendChild(leftF);cols.appendChild(l2);
  const rr=el('div','colR');cols.appendChild(rr);
  const rec=el('div','pn'),drf=el('div','pn');rr.appendChild(rec);rr.appendChild(drf);
- function reveal(instant){leftF.appendChild(factsNode(r));(x.rules_cited||[]).forEach(k=>{const q=el('div','rule');q.appendChild(el('b','',k));q.appendChild(document.createTextNode(RULES[k]||''));leftF.appendChild(q)});
+ const full=x.draft_reply||'';let revealed=false;
+ function reveal(instant){revealed=true;leftF.appendChild(factsNode(r));(x.rules_cited||[]).forEach(k=>{const q=el('div','rule');q.appendChild(el('b','',k));q.appendChild(document.createTextNode(RULES[k]||''));leftF.appendChild(q)});
   rec.textContent='';rec.appendChild(el('h4','','Recommendation'));const rc=el('div','rec');const dot=el('span','dot');dot.style.background='var(--d-'+x.decision+')';rc.appendChild(dot);rc.appendChild(el('span','big',DEC[x.decision]||x.decision));
   if((x.decision==='approve_refund'||x.decision==='store_credit')&&x.refund_amount!=null)rc.appendChild(el('span','amt',x.refund_amount.toFixed(2)+' €'));rec.appendChild(rc);
   const ac=el('div','achks');autoChecks(r).forEach(c=>ac.appendChild(el('span','achk '+(c.w?'w':'ok'),(c.w?'⚠ ':'✓ ')+c.t)));rec.appendChild(ac);
   if(x.internal_note)rec.appendChild(nt('For the reviewer: '+x.internal_note));(r.guardrail_notes||[]).forEach(g=>rec.appendChild(nt('Guardrail: '+g)));
   if(r.reflection&&r.reflection.ok===false)rec.appendChild(nt('The draft check revised the reply: '+(r.reflection.issues||[])[0]));
   drf.textContent='';drf.appendChild(el('h4','','Draft reply · editable'));const ta=el('textarea');ta.setAttribute('aria-label','Draft reply');drf.appendChild(ta);
-  const full=x.draft_reply||'';
-  if(instant||!full){ta.value=full}else{let i=0;ta.value='';typer=setInterval(()=>{i+=3;ta.value=full.slice(0,i);if(i>=full.length)clearInterval(typer)},8)}
+  if(instant||!full){ta.value=full}else{let i=0;ta.value='';typer=setInterval(()=>{i+=9;ta.value=full.slice(0,i);if(i>=full.length)clearInterval(typer)},8)}
   ta.onfocus=()=>{clearInterval(typer);if(ta.value.length<full.length&&full.startsWith(ta.value))ta.value=full};
   const a=el('div','acts');const esc=x.decision==='escalate';
   const primary=el('button','go'+(esc?' vio':''),esc?'Send to manager':'Approve & send');primary.appendChild(el('kbd','',esc?'E':'A'));
   const alt=el('button','sec',esc?'Approve anyway':'Escalate');alt.appendChild(el('kbd','',esc?'A':'E'));
   const st0=status[key()];if(st0){primary.disabled=true;alt.disabled=true;a.appendChild(el('span','hint',st0==='sent'?'Sent (simulation).':'Sent to manager (simulation).'))}
   primary.onclick=()=>act(esc?'escalated':'sent',ta,full);alt.onclick=()=>act(esc?'sent':'escalated',ta,full);a.appendChild(primary);a.appendChild(alt);drf.appendChild(a);
-  drf.appendChild(el('div','hint','Enter accepts · A approve · E escalate · U undo · J / K move · nothing is really sent'));
-  if($('#evaltog').checked){const e=el('div','evalbox');e.appendChild(el('div','','Evaluation label: expected '+(DEC[t.expected.decision]||t.expected.decision)+' · rules '+t.expected.rules.join(', ')));if(t.label_note)e.appendChild(el('div','',t.label_note));if((r.reply_flags||[]).length)e.appendChild(el('div','','Reply flags: '+r.reply_flags.join(', ')));Object.entries(r.score.checks).forEach(([k,v])=>e.appendChild(el('span','ck'+(v?'':' f'),(v?'✓ ':'✕ ')+(CHK[k]||k))));drf.appendChild(e)}}
+  drf.appendChild(el('div','hint','Enter accepts · A approve · E escalate · U undo · J / K move · nothing is really sent'));}
  function skeleton(){rec.appendChild(el('h4','','Recommendation'));[60,90,40].forEach(w=>{const s=el('div','skel');s.style.width=w+'%';rec.appendChild(s)});drf.appendChild(el('h4','','Draft reply'));[100,95,90,60].forEach(w=>{const s=el('div','skel');s.style.width=w+'%';drf.appendChild(s)})}
- if(done){reveal(true)}else{skeleton();let i=0;nodes[0].className='ts run';timer=setInterval(()=>{nodes[i].className='ts ok';nodes[i].firstChild.textContent='✓';i++;if(i<nodes.length){nodes[i].className='ts run'}else{clearInterval(timer);processed[key()]=true;inbox();reveal(false)}},330)}}
+ skipFn=null;
+ if(done){reveal(true)}else{skeleton();let i=0;nodes[0].className='ts run';
+  skipFn=()=>{clearInterval(timer);clearInterval(typer);if(!revealed){nodes.forEach(n=>{n.className='ts ok';n.firstChild.textContent='✓'});processed[key()]=true;inbox();rec.textContent='';drf.textContent='';reveal(true)}else{const t=drf.querySelector('textarea');if(t)t.value=full}skipFn=null};
+  timer=setInterval(()=>{nodes[i].className='ts ok';nodes[i].firstChild.textContent='✓';i++;if(i<nodes.length){nodes[i].className='ts run'}else{clearInterval(timer);processed[key()]=true;inbox();rec.textContent='';drf.textContent='';reveal(false);setTimeout(()=>{skipFn=null},700)}},170)}}
 function act(kind,ta,orig){const k=key();status[k]=kind;edited[k]=ta.value.trim()!==orig.trim();lastAct={k,id:sel};save();
  toast(kind==='sent'?'Reply sent'+(edited[k]?' (edited)':'')+' · simulation':'Sent to manager · simulation','Undo (U)',undo);bar();inbox();
  const rs=rowsOf(),i=rs.findIndex(r=>r.ticket_id===sel),nx=rs.slice(i+1).concat(rs.slice(0,i)).find(r=>st(r)==='pending');
@@ -399,14 +439,15 @@ function act(kind,ta,orig){const k=key();status[k]=kind;edited[k]=ta.value.trim(
 addEventListener('keydown',e=>{if(!$('#v-platform').classList.contains('on'))return;const tg=e.target.tagName;if(tg==='TEXTAREA'||tg==='SELECT'||tg==='INPUT'||e.metaKey||e.ctrlKey)return;
  const rs=rowsOf(),i=rs.findIndex(r=>r.ticket_id===sel);
  if(e.key==='j'||e.key==='k'){const n=rs[Math.max(0,Math.min(rs.length-1,i+(e.key==='j'?1:-1)))];sel=n.ticket_id;inbox();renderTicket();const it=document.querySelector('.it.on');if(it)it.scrollIntoView({block:'nearest'})}
+ if(skipFn&&(e.key==='Enter'||e.key==='a'||e.key==='e')){e.preventDefault();skipFn();return}
  if(e.key==='u'){undo()}
  if(e.key==='Enter'){const b=document.querySelector('.acts .go');if(b&&!b.disabled){e.preventDefault();b.click()}}
  if(e.key==='a'||e.key==='e'){const b=[...document.querySelectorAll('.acts .go,.acts .sec')].filter(b=>!b.disabled).find(b=>b.textContent.endsWith(e.key.toUpperCase()));if(b)b.click()}});
 
-function boot(){const [k,o]=parseHash();if(o.e&&S[o.e])eng=o.e;if(o.t)sel=o.t;if(o.clean)document.body.classList.add('clean');if(o.z)document.body.style.zoom=o.z;if(o.ev)$('#evaltog').checked=true;if(o.anim){ANIM=true;$('#animtog').checked=true}go(k||'overview');if(o.sc)setTimeout(()=>{const t=document.getElementById(o.sc);if(t)t.scrollIntoView({block:'start'})},60)}
+function boot(){const [k,o]=parseHash();if(o.e&&S[o.e])eng=o.e;if(o.t)sel=o.t;if(o.f)filter=o.f;if(o.clean)document.body.classList.add('clean');if(o.z)document.body.style.zoom=o.z;if(o.anim==='0')ANIM=false;go(k||'overview');if(o.sc)setTimeout(()=>{const t=document.getElementById(o.sc);if(t)t.scrollIntoView({block:'start'})},60)}
 const SELFTEST=location.hash.includes('selftest');
 boot();
-if(SELFTEST){try{const click=()=>document.querySelector('.acts .go').click();const n0=rowsOf().filter(r=>st(r)==='pending').length;
+if(SELFTEST){try{if(skipFn)skipFn();const click=()=>document.querySelector('.acts .go').click();const n0=rowsOf().filter(r=>st(r)==='pending').length;
  click();const n1=rowsOf().filter(r=>st(r)==='pending').length;undo();const n2=rowsOf().filter(r=>st(r)==='pending').length;
  const ac=document.querySelector('.acts'),apr=ac.getBoundingClientRect(),actsFit=[...ac.children].every(c=>c.getBoundingClientRect().right<=apr.right+1),chips=document.querySelectorAll('.achk').length,items=document.querySelectorAll('.it').length,noScroll=document.documentElement.scrollHeight<=innerHeight+2;
  document.title='SELFTEST '+JSON.stringify({pending_before:n0,after_approve:n1,after_undo:n2,chips,items,noScroll,actsFit,saved:!!localStorage.getItem(LS)})}catch(e){document.title='SELFTEST ERROR '+e.message}}
