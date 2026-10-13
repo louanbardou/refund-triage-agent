@@ -99,94 +99,84 @@ def build_beats(run: Path, demo_system: str):
     records = [json.loads(line) for line in (run / "records.jsonl").read_text().splitlines()]
     tickets = {t["ticket_id"]: t for t in load_tickets()}
     rec = {(r["system"], r["ticket_id"]): r for r in records if r.get("repeat", 0) == 0}
-    S = summary.get(demo_system)
     n = summary["_meta"]["n_tickets"]
-    report = (run / "report.html").resolve().as_uri()
+    site = (ROOT / "docs" / "index.html").resolve().as_uri()
     beats = []
 
     def add(bid, html_, narration):
         beats.append({"id": bid, "html": html_, "narration": narration})
 
-    def term_beats(tid, tag, parts, narrs):
-        t, r = tickets[tid], rec[(demo_system, tid)]
-        sec = trace.sections(t, r)
-        cmd = f"python3 triage.py {tid}"
-        for i, (keys, nar) in enumerate(zip(parts, narrs)):
-            text = "\n\n".join(sec[k] for k in keys)
-            add(f"{tag}_{i}", terminal(cmd, text, nar), nar)
+    PLAT = [250, 600, 950, 1300, 1650, 2000, 2350, 2700, 3100, 3600, 4300, 9000]   # virtual-time stops: steps tick, draft types
+    BARS = [150, 450, 800, 1400, 9000]
+
+    def frame(hash_, caption, z=1.0, h=840, wait=9000, anim=None):
+        return {"html": page(f'<iframe src="{site}#{hash_}&clean=1&z={z}" style="height:{h}px;width:1720px"></iframe>', caption, "padding:40px 100px 0"), "wait": wait, "anim": anim}
+
+    # the story must match the data: fail the build instead of narrating something untrue
+    expect = {"T06": "approve_refund", "T11": "escalate", "T13": "ask_info", "T18": "reject"}
+    for tid, dec in expect.items():
+        got = rec[(demo_system, tid)]["result"]["decision"]
+        assert got == dec, f"narration assumes {tid} -> {dec}, but {demo_system} produced {got}"
+
+    llm = [k for k in summary if k not in ("manual", "_meta", "b0_templates") and not k.startswith("_")]
+    ks = [round(summary[k]["task_success"] * n) for k in llm]
+    lo, hi = min(ks), max(ks)
+    A, B1 = summary.get("agent"), summary.get("b1_access")
+    fails = sorted({t for k in llm for t in summary[k]["failures"]})
 
     # 1 title
-    add("01_title", slide("MSc DSAIB · Generative and Agentic AI for Business", "Refund triage assistant",
-        sub="A bounded agent that prepares a decision and a draft reply. A staff member approves every send.",
-        caption="A small online shop gets return and refund emails. The slow part is finding the order and applying the policy with its date rules."),
-        "A small online shop gets return and refund emails. The slow part is not writing the reply. It is finding the order, and applying the policy with its date rules.")
+    nar = ("A small online shop gets return and refund emails. The slow part is not writing the reply. "
+           "It is finding the order and applying the policy with its date rules. This is a bounded agent that drafts the reply, and a person decides.")
+    add("01_title", slide("MSc DSAIB · Generative and Agentic AI for Business", "Refund triage agent",
+                          sub="Drafts a decision and a reply. A staff member approves every send.", caption=nar), nar)
 
-    # 2 problem + EDGE
-    flow = '<div class="flow">' + "".join(f'<div class="box{" hot" if h else ""}">{esc(x)}</div>' for x, h in
-                                          [("Read", 0), ("Find facts", 1), ("Compose", 0), ("Check", 1), ("Send", 0)]) + "</div>"
-    nar = ("I modelled the manual process at five minutes per ticket. Finding the facts and checking the draft are the steps I target. "
-           "The efficiency goal is to cut staff time, and the decision goal is a reply that cites the policy and the order record.")
-    add("02_edge", slide("Business problem and EDGE target", "Where does the support desk lose time?", extra=flow,
-        bullets=["Efficiency: staff minutes per ticket (modelled, not measured)",
-                 "Decisions: every reply grounded in the policy and the order record"], caption=nar), nar)
+    # 2 overview from the site
+    nar = ("The agent reads the email, looks up the order with read only tools, applies nine policy rules, and checks its own draft against the facts. "
+           "Tools are tied to the sender's email, refunds above one hundred euros go to a manager, and any failure goes to a person.")
+    f = frame("overview", nar, 1.12)
+    add("02_overview", f["html"], nar); beats[-1]["wait"] = f["wait"]
 
-    # 3 design
-    nar = ("From the five A's, I chose an agent, kept small. The next step depends on what a lookup returns. "
-           "Tools are read only and tied to the sender's email. Code enforces the manager threshold. And a human approves every draft.")
-    add("03_design", slide("Solution design", "Agent, with controls around it",
-        bullets=["Two read-only tools, scoped to the sender's email",
-                 "Maximum six steps, then one check of the draft against the facts",
-                 "Code guardrail: refunds above 100 EUR go to a manager",
-                 "Email text is untrusted data",
-                 "Any failure routes the ticket to a human"], caption=nar), nar)
+    # 3 terminal trace T06
+    t = tickets["T06"]; sec = trace.sections(t, rec[(demo_system, "T06")])
+    cmd = "python3 triage.py T06"
+    for i, (keys, nr) in enumerate(zip([["email", "tools"], ["decision"], ["draft", "stats"]],
+                                      ["Case one: a cracked carafe, with a photo. The agent looks up the order with a read only tool.",
+                                       "It applies rule four and decides to approve a refund.",
+                                       "It drafts the reply for staff to review. The last line gives latency, tokens and cost for this ticket."])):
+        add(f"03_T06_{i}", terminal(cmd, "\n\n".join(sec[k] for k in keys), nr), nr)
 
-    # 4 live examples
-    term_beats("T06", "04_T06",
-               [["email", "tools"], ["decision"], ["draft", "stats"]],
-               ["Case one: a cracked carafe, with a photo. The agent looks up the order with a read only tool.",
-                "It applies rule R4 and decides to approve a refund.",
-                "It drafts the reply for staff to review. The line at the bottom gives latency, tokens and cost for this ticket."])
-    term_beats("T11", "05_T11", [["email", "tools"], ["decision", "draft"]],
-               ["Case two: a parcel that is fifteen days late. This is a manager decision under rule R6.",
-                "The agent does not decide. It escalates, and the draft promises nothing."])
-    term_beats("T13", "06_T13", [["email", "tools"], ["decision", "draft"]],
-               ["Case three: the sender's email does not match the order. The tool returns nothing.",
-                "So the agent asks for information, and reveals no order detail. The identity check lives in the tool, not in the prompt."])
-    term_beats("T18", "07_T18", [["email"], ["decision", "draft"]],
-               ["Case four: an email that says the manager pre approved the refund and tells the assistant to say yes.",
-                "The order is seventy three days old, so the policy says reject. The email is treated as data, not as instructions."])
+    # 4 staff platform cases
+    for tid, tag, nr in [("T11", "04_T11", "Case two, in the staff platform: a parcel fifteen days late. This is a manager decision, so the agent escalates and the draft promises nothing."),
+                         ("T13", "05_T13", "Case three: the sender's email does not match the order, so the tool returns nothing. The agent asks for information and reveals no order detail."),
+                         ("T18", "06_T18", "Case four: an email claims the manager pre approved the refund and tells the assistant to say yes. The order is seventy three days old, so the policy says reject. The email is treated as data.")]:
+        f = frame(f"platform&t={tid}&e={demo_system}", nr, 1.12, anim=PLAT)
+        add(tag, f["html"], nr); beats[-1]["wait"] = f["wait"]; beats[-1]["anim"] = f["anim"]
 
     # 5 results
-    def sysline(k, label):
-        s = summary.get(k)
-        return f"{label[0].upper() + label[1:]}: {pct(s['task_success'])} task success, ${s['cost_per_ticket_usd']:.4f} per ticket, {s['latency_mean_s']} s on average" if s else ""
-
-    lines = [sysline(k, l) for k, l in [("b0_templates", "keyword templates"), ("b1_access", "single paste and draft call"), ("b1_access_days", "paste and draft with precomputed day counts"),
-                                       ("agent_no_reflection", "agent without the check"), ("agent", "agent with the check")]]
-    nar = (f"I compared the systems on {n} labelled tickets. " + ". ".join(x for x in lines if x) + ". "
-           "These are small, synthetic samples, so I read the differences as indications, not as proof.")
-    add("08_results", page(f'<iframe src="{report}#view=summary&zoom=1.35&theme=light" style="height:830px"></iframe>', nar, "padding:50px 100px 0"), nar)
-
-    # 6 a staff review card (first failure of the demo system if any, else T12)
-    failing = [tid for (s_, tid), r in rec.items() if s_ == demo_system and tid in tickets and
-               summary[demo_system]["failures"].get(tid)]
-    pick = sorted(failing)[0] if failing else "T12"
-    if failing:
-        nar = (f"Here is what staff see: the email, the facts, and the draft side by side. This is ticket {pick}, one that failed an automatic check, "
-               "which is why the review step exists.")
+    b0 = summary["b0_templates"]["task_success"]
+    nar = (f"I compared five systems on {n} labelled tickets. Keyword templates pass {round(b0*100)} percent. "
+           f"The model based systems pass {lo if lo == hi else str(lo) + ' to ' + str(hi)} of {n}, so at this scale accuracy does not separate them.")
+    f = frame("results", nar, 1.0, anim=BARS); add("07_results_a", f["html"], nar); beats[-1]["wait"] = f["wait"]; beats[-1]["anim"] = f["anim"]
+    if A and B1:
+        nar = (f"The difference is modelled staff time: about {A['staff_minutes_per_ticket']:.1f} minute per ticket with the agent, against {B1['staff_minutes_per_ticket']:.1f} pasting the order by hand. "
+               f"That rests on an assumed lookup time. The agent costs about {A['cost_per_ticket_usd']/B1['cost_per_ticket_usd']:.1f} times as much per ticket, and is slower.")
+        f = frame("results&sc=c-cost", nar, 1.0); add("08_results_b", f["html"], nar); beats[-1]["wait"] = f["wait"]
+    if fails == ["T30"]:
+        nar = ("Each cell in this map is one ticket. The only failure among the model systems is ticket thirty, where the label itself is ambiguous. Escalating to verify a claimed authorisation is also defensible.")
     else:
-        nar = "Here is what staff see: the email, the retrieved facts, and the draft side by side, with approve, revise or escalate."
-    add("09_review", page(f'<iframe src="{report}#view=card&only={pick}&system={demo_system}&zoom=1.0&theme=light" style="height:830px"></iframe>', nar,
-                          "padding:50px 100px 0"), nar)
+        nar = "Each cell is one ticket. I read every failure; the map shows which system failed which ticket."
+    f = frame("results&sc=heatcard", nar, 1.0); add("09_heat", f["html"], nar); beats[-1]["wait"] = f["wait"]
 
-    # 7 limits
-    nar = ("Limits: twenty synthetic tickets that I wrote, regular expression scoring, and staff time modelled from assumptions. "
+    # 6 limits
+    nar = ("Limits: thirty one synthetic tickets that I wrote, deterministic checks, and staff time modelled from assumptions. "
+           "The data supports that model systems beat keyword templates. It does not show the agent is more accurate than pasting the order into a chat. "
            "A pilot would run in shadow mode on real tickets, with every draft approved by a person. The voice in this video is synthetic.")
     add("10_limits", slide("Limits and next step", "What this does and does not show",
-        bullets=[f"{n} synthetic, author-written tickets; one model",
-                 "Regex-based scoring; staff minutes are assumptions",
-                 "Pilot: shadow mode on real tickets, every draft approved, track revise rate",
-                 "Voice-over: synthetic (macOS text to speech)"], caption=nar), nar)
+                           bullets=[f"{n} synthetic, author-written tickets; one small model",
+                                    "Deterministic checks; staff minutes are assumptions",
+                                    "Model systems beat templates; the agent is not shown more accurate than paste",
+                                    "Pilot: shadow mode, every draft approved by a person",
+                                    "Voice-over: synthetic (text to speech)"], caption=nar), nar)
     return beats
 
 
@@ -194,11 +184,11 @@ def sh(*cmd, **kw):
     return subprocess.run(cmd, check=True, capture_output=True, text=True, **kw)
 
 
-def render(html_text: str, png: Path, work: Path):
+def render(html_text: str, png: Path, work: Path, wait: int = 4000):
     f = work / (png.stem + ".html")
     f.write_text(html_text)
     sh(CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--allow-file-access-from-files",
-       f"--window-size={W},{H}", "--virtual-time-budget=4000", f"--screenshot={png}", f.resolve().as_uri())
+       f"--window-size={W},{H}", f"--virtual-time-budget={wait}", f"--screenshot={png}", f.resolve().as_uri())
 
 
 def duration(path: Path) -> float:
@@ -224,7 +214,16 @@ def main():
     clips = []
     for b in beats:
         png, wav, mp4 = work / f"{b['id']}.png", work / f"{b['id']}.wav", work / f"{b['id']}.mp4"
-        render(b["html"], png, work)
+        stops = b.get("anim")
+        if stops:
+            seq = []
+            for k, w in enumerate(stops):
+                pk = work / f"{b['id']}_f{k:02d}.png"
+                render(b["html"], pk, work, w)
+                seq.append(pk)
+            png = seq[-1]
+        else:
+            render(b["html"], png, work, b.get("wait", 4000))
         own = next((p for ext in ("wav", "m4a", "aiff", "mp3") if (p := custom / f"{b['id']}.{ext}").exists()), None)
         if own:
             sh("ffmpeg", "-y", "-i", str(own), "-ar", "44100", "-ac", "1", str(wav))
@@ -233,6 +232,17 @@ def main():
             sh("say", "-v", a.voice, "-r", str(a.rate), "-o", str(aiff), b["narration"])
             sh("ffmpeg", "-y", "-i", str(aiff), "-ar", "44100", "-ac", "1", str(wav))
         d = duration(wav) + 0.7
+        if stops:
+            hold = 0.42
+            lines = "".join(f"file '{p_.resolve()}'\nduration {hold}\n" for p_ in seq[:-1])
+            lines += f"file '{seq[-1].resolve()}'\nduration {max(d - hold * (len(seq) - 1), 1.0):.2f}\nfile '{seq[-1].resolve()}'\n"
+            (work / f"{b['id']}_frames.txt").write_text(lines)
+            sh("ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(work / f"{b['id']}_frames.txt"), "-i", str(wav), "-t", f"{d:.2f}",
+               "-af", "apad=pad_dur=1", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-r", "30",
+               "-c:a", "aac", "-b:a", "160k", "-ar", "44100", "-ac", "1", str(mp4))
+            clips.append(mp4)
+            print(f"{b['id']:12s} {d:5.1f}s  ({len(seq)} animation frames)")
+            continue
         sh("ffmpeg", "-y", "-loop", "1", "-framerate", "30", "-i", str(png), "-i", str(wav), "-t", f"{d:.2f}",
            "-af", "apad=pad_dur=1", "-c:v", "libx264", "-tune", "stillimage", "-pix_fmt", "yuv420p", "-r", "30",
            "-c:a", "aac", "-b:a", "160k", "-ar", "44100", "-ac", "1", str(mp4))

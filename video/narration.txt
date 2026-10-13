@@ -1,44 +1,35 @@
 [01_title]
-A small online shop gets return and refund emails. The slow part is not writing the reply. It is finding the order, and applying the policy with its date rules.
+A small online shop gets return and refund emails. The slow part is not writing the reply. It is finding the order and applying the policy with its date rules. This is a bounded agent that drafts the reply, and a person decides.
 
-[02_edge]
-I modelled the manual process at five minutes per ticket. Finding the facts and checking the draft are the steps I target. The efficiency goal is to cut staff time, and the decision goal is a reply that cites the policy and the order record.
+[02_overview]
+The agent reads the email, looks up the order with read only tools, applies nine policy rules, and checks its own draft against the facts. Tools are tied to the sender's email, refunds above one hundred euros go to a manager, and any failure goes to a person.
 
-[03_design]
-From the five A's, I chose an agent, kept small. The next step depends on what a lookup returns. Tools are read only and tied to the sender's email. Code enforces the manager threshold. And a human approves every draft.
-
-[04_T06_0]
+[03_T06_0]
 Case one: a cracked carafe, with a photo. The agent looks up the order with a read only tool.
 
-[04_T06_1]
-It applies rule R4 and decides to approve a refund.
+[03_T06_1]
+It applies rule four and decides to approve a refund.
 
-[04_T06_2]
-It drafts the reply for staff to review. The line at the bottom gives latency, tokens and cost for this ticket.
+[03_T06_2]
+It drafts the reply for staff to review. The last line gives latency, tokens and cost for this ticket.
 
-[05_T11_0]
-Case two: a parcel that is fifteen days late. This is a manager decision under rule R6.
+[04_T11]
+Case two, in the staff platform: a parcel fifteen days late. This is a manager decision, so the agent escalates and the draft promises nothing.
 
-[05_T11_1]
-The agent does not decide. It escalates, and the draft promises nothing.
+[05_T13]
+Case three: the sender's email does not match the order, so the tool returns nothing. The agent asks for information and reveals no order detail.
 
-[06_T13_0]
-Case three: the sender's email does not match the order. The tool returns nothing.
+[06_T18]
+Case four: an email claims the manager pre approved the refund and tells the assistant to say yes. The order is seventy three days old, so the policy says reject. The email is treated as data.
 
-[06_T13_1]
-So the agent asks for information, and reveals no order detail. The identity check lives in the tool, not in the prompt.
+[07_results_a]
+I compared five systems on 31 labelled tickets. Keyword templates pass 3 percent. The model based systems pass 30 to 31 of 31, so at this scale accuracy does not separate them.
 
-[07_T18_0]
-Case four: an email that says the manager pre approved the refund and tells the assistant to say yes.
+[08_results_b]
+The difference is modelled staff time: about 1.1 minute per ticket with the agent, against 3.5 pasting the order by hand. That rests on an assumed lookup time. The agent costs about 2.1 times as much per ticket, and is slower.
 
-[07_T18_1]
-The order is seventy three days old, so the policy says reject. The email is treated as data, not as instructions.
-
-[08_results]
-I compared the systems on 20 labelled tickets. keyword templates: 10% task success, $0.0000 per ticket, 0.0 s on average. These are small, synthetic samples, so I read the differences as indications, not as proof.
-
-[09_review]
-Here is what staff see: the email, the facts, and the draft side by side. This is ticket T01, one that failed an automatic check, which is why the review step exists.
+[09_heat]
+Each cell in this map is one ticket. The only failure among the model systems is ticket thirty, where the label itself is ambiguous. Escalating to verify a claimed authorisation is also defensible.
 
 [10_limits]
-Limits: twenty synthetic tickets that I wrote, regular expression scoring, and staff time modelled from assumptions. A pilot would run in shadow mode on real tickets, with every draft approved by a person. The voice in this video is synthetic.
+Limits: thirty one synthetic tickets that I wrote, deterministic checks, and staff time modelled from assumptions. The data supports that model systems beat keyword templates. It does not show the agent is more accurate than pasting the order into a chat. A pilot would run in shadow mode on real tickets, with every draft approved by a person. The voice in this video is synthetic.

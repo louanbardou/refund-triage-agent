@@ -19,6 +19,7 @@ nav .wrap{display:flex;align-items:center;gap:18px;height:60px}
 .tab{border:0;background:transparent;padding:8px 14px;border-radius:10px;color:var(--ink2);cursor:pointer;font-weight:550;font-size:14.5px;white-space:nowrap}
 .tab:hover{background:var(--soft);color:var(--ink)}.tab.on{background:var(--ink);color:#fff}
 .gh{margin-left:auto;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 13px;border-radius:10px;font-weight:550;font-size:14px;white-space:nowrap}
+.clean nav{display:none}.clean .view{padding-top:14px}.clean .pf-head{display:none}
 .view{display:none;padding:44px 0 80px;animation:fade .35s ease}.view.on{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 h1{font-size:clamp(40px,6.4vw,72px);line-height:1.02;letter-spacing:-.04em;margin:0 0 18px;font-weight:760}
@@ -127,8 +128,8 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
 <main class="wrap">
 <section class="view" id="v-overview">
  <div class="hero">
-  <h1>Refund emails,<br>drafted. Not sent.</h1>
-  <p class="sub">An agent reads the email, looks up the order, applies the returns policy and drafts a reply. A staff member decides.</p>
+  <h1>Refund emails,<br>handled automatically.</h1>
+  <p class="sub">An agent reads each email, looks up the order, applies the returns policy and writes the reply. Staff only review and approve.</p>
   <div class="btns"><button class="btn p" onclick="go('platform')">Open the platform →</button><button class="btn" onclick="go('results')">See the results</button></div>
  </div>
  <div class="tiles" id="tiles"></div>
@@ -152,7 +153,7 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
   <div class="card"><h3>Staff time per ticket</h3><div class="cs">Minutes, modelled from assumed step times.</div><div id="c-time"></div></div>
   <div class="card"><h3>Cost per 1,000 tickets</h3><div class="cs">US dollars, model tokens only.</div><div id="c-cost"></div></div>
   <div class="card"><h3>Latency per ticket</h3><div class="cs">Seconds, mean over tickets.</div><div id="c-lat"></div></div>
-  <div class="card full"><h3>Where each system fails</h3><div class="cs">One cell per ticket. Hover for the failed checks; click to open the ticket in the platform.</div>
+  <div class="card full" id="heatcard"><h3>Where each system fails</h3><div class="cs">One cell per ticket. Hover for the failed checks; click to open the ticket in the platform.</div>
    <div class="heat"><div class="hg" id="heat"></div></div>
    <div class="legend"><span><i style="background:var(--good)">✓</i>All checks passed</span><span><i style="background:var(--bad)">✕</i>At least one check failed</span></div></div>
  </div>
@@ -208,7 +209,8 @@ let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on
 const VIEWS=[['overview','Overview'],['results','Results'],['platform','Platform'],['video','Video'],['run','Run it']];
 const tabs=$('#tabs');VIEWS.forEach(([k,l])=>{const b=el('button','tab',l);b.id='tab-'+k;b.onclick=()=>go(k);tabs.appendChild(b)});
 function go(k){if(!VIEWS.find(v=>v[0]===k))k='overview';VIEWS.forEach(([v])=>{$('#v-'+v).classList.toggle('on',v===k);$('#tab-'+v).classList.toggle('on',v===k)});history.replaceState(null,'','#'+k);scrollTo({top:0});if(k==='platform')renderPlatform();if(k==='results')drawResults()}
-addEventListener('hashchange',()=>go(location.hash.slice(1)));
+function parseHash(){const p=location.hash.slice(1).split('&'),o={};p.slice(1).forEach(x=>{const [a,b]=x.split('=');o[a]=b});return [p[0],o]}
+addEventListener('hashchange',()=>boot());
 
 const A=S.agent||S[ORDER[ORDER.length-1]];
 [[pct(A.task_success),'Task success',D.summary._meta.n_tickets+' tickets'],[A.staff_minutes_per_ticket.toFixed(1)+' min','Staff time per ticket','vs '+MAN.toFixed(1)+' min manual (modelled)'],['$'+A.cost_per_ticket_usd.toFixed(4),'Model cost per ticket','tokens only'],[A.latency_mean_s+' s','Latency per ticket','mean']]
@@ -315,5 +317,6 @@ addEventListener('keydown',e=>{if(!$('#v-platform').classList.contains('on'))ret
  if(e.key==='j'||e.key==='k'){const n=rs[Math.max(0,Math.min(rs.length-1,i+(e.key==='j'?1:-1)))];sel=n.ticket_id;inbox();renderTicket();const it=document.querySelector('.it.on');if(it)it.scrollIntoView({block:'nearest'})}
  if(e.key==='a'||e.key==='e'){const b=[...document.querySelectorAll('.acts .go,.acts .sec')].filter(b=>!b.disabled).find(b=>b.textContent.endsWith(e.key.toUpperCase()));if(b)b.click()}});
 
-go(location.hash.slice(1)||'overview');
+function boot(){const [k,o]=parseHash();if(o.e&&S[o.e])eng=o.e;if(o.t)sel=o.t;if(o.clean)document.body.classList.add('clean');if(o.z)document.body.style.zoom=o.z;if(o.ev)$('#evaltog').checked=true;go(k||'overview');if(o.sc)setTimeout(()=>{const t=document.getElementById(o.sc);if(t)t.scrollIntoView({block:'start'})},60)}
+boot();
 </script></body></html>
