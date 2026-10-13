@@ -1,0 +1,524 @@
+[
+ {
+  "order_id": "O-1001",
+  "customer_email": "anna.keller@example.com",
+  "customer_name": "Anna Keller",
+  "status": "delivered",
+  "order_date": "2026-09-28",
+  "delivered_date": "2026-10-03",
+  "estimated_delivery": "2026-10-03",
+  "items": [
+   {
+    "sku": "WT-01",
+    "name": "Wool throw",
+    "price": 59.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1002",
+  "customer_email": "marc.dubois@example.com",
+  "customer_name": "Marc Dubois",
+  "status": "delivered",
+  "order_date": "2026-09-14",
+  "delivered_date": "2026-09-20",
+  "estimated_delivery": "2026-09-20",
+  "items": [
+   {
+    "sku": "CL-02",
+    "name": "Ceramic table lamp",
+    "price": 145.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1003",
+  "customer_email": "sofia.rossi@example.com",
+  "customer_name": "Sofia Rossi",
+  "status": "delivered",
+  "order_date": "2026-08-30",
+  "delivered_date": "2026-09-05",
+  "estimated_delivery": "2026-09-05",
+  "items": [
+   {
+    "sku": "LC-03",
+    "name": "Linen cushion",
+    "price": 35.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1004",
+  "customer_email": "liam.oconnor@example.com",
+  "customer_name": "Liam O'Connor",
+  "status": "delivered",
+  "order_date": "2026-08-09",
+  "delivered_date": "2026-08-15",
+  "estimated_delivery": "2026-08-15",
+  "items": [
+   {
+    "sku": "DO-04",
+    "name": "Desk organizer",
+    "price": 28.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1005",
+  "customer_email": "emma.larsen@example.com",
+  "customer_name": "Emma Larsen",
+  "status": "delivered",
+  "order_date": "2026-09-25",
+  "delivered_date": "2026-10-01",
+  "estimated_delivery": "2026-10-01",
+  "items": [
+   {
+    "sku": "CS-05",
+    "name": "Candle set (clearance)",
+    "price": 18.0,
+    "final_sale": true
+   }
+  ]
+ },
+ {
+  "order_id": "O-1006",
+  "customer_email": "yuki.tanaka@example.com",
+  "customer_name": "Yuki Tanaka",
+  "status": "delivered",
+  "order_date": "2026-10-02",
+  "delivered_date": "2026-10-08",
+  "estimated_delivery": "2026-10-08",
+  "items": [
+   {
+    "sku": "GC-06",
+    "name": "Glass carafe",
+    "price": 42.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1007",
+  "customer_email": "carlos.mendez@example.com",
+  "customer_name": "Carlos Mendez",
+  "status": "delivered",
+  "order_date": "2026-10-03",
+  "delivered_date": "2026-10-09",
+  "estimated_delivery": "2026-10-09",
+  "items": [
+   {
+    "sku": "MS-07",
+    "name": "Mug set (clearance)",
+    "price": 24.0,
+    "final_sale": true
+   }
+  ]
+ },
+ {
+  "order_id": "O-1008",
+  "customer_email": "hana.novak@example.com",
+  "customer_name": "Hana Novak",
+  "status": "delivered",
+  "order_date": "2026-09-16",
+  "delivered_date": "2026-09-22",
+  "estimated_delivery": "2026-09-22",
+  "items": [
+   {
+    "sku": "FL-08",
+    "name": "Floor lamp",
+    "price": 89.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1009",
+  "customer_email": "pierre.martin@example.com",
+  "customer_name": "Pierre Martin",
+  "status": "processing",
+  "order_date": "2026-10-12",
+  "delivered_date": null,
+  "estimated_delivery": "2026-10-19",
+  "items": [
+   {
+    "sku": "BT-09",
+    "name": "Bath towel set",
+    "price": 45.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1010",
+  "customer_email": "julia.schmidt@example.com",
+  "customer_name": "Julia Schmidt",
+  "status": "shipped",
+  "order_date": "2026-10-02",
+  "delivered_date": null,
+  "estimated_delivery": "2026-10-10",
+  "items": [
+   {
+    "sku": "RG-10",
+    "name": "Woven rug",
+    "price": 120.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1011",
+  "customer_email": "tom.baker@example.com",
+  "customer_name": "Tom Baker",
+  "status": "shipped",
+  "order_date": "2026-09-18",
+  "delivered_date": null,
+  "estimated_delivery": "2026-09-28",
+  "items": [
+   {
+    "sku": "CH-11",
+    "name": "Oak side chair",
+    "price": 79.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1012",
+  "customer_email": "nina.petrova@example.com",
+  "customer_name": "Nina Petrova",
+  "status": "delivered",
+  "order_date": "2026-09-29",
+  "delivered_date": "2026-10-05",
+  "estimated_delivery": "2026-10-05",
+  "items": [
+   {
+    "sku": "VS-12",
+    "name": "Stoneware vase",
+    "price": 30.0,
+    "final_sale": false
+   },
+   {
+    "sku": "PF-12",
+    "name": "Picture frame",
+    "price": 22.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1013",
+  "customer_email": "david.cohen@example.com",
+  "customer_name": "David Cohen",
+  "status": "delivered",
+  "order_date": "2026-09-26",
+  "delivered_date": "2026-10-02",
+  "estimated_delivery": "2026-10-02",
+  "items": [
+   {
+    "sku": "CU-13",
+    "name": "Cotton curtains",
+    "price": 64.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1014",
+  "customer_email": "sara.ali@example.com",
+  "customer_name": "Sara Ali",
+  "status": "delivered",
+  "order_date": "2026-08-14",
+  "delivered_date": "2026-08-20",
+  "estimated_delivery": "2026-08-20",
+  "items": [
+   {
+    "sku": "PS-14",
+    "name": "Pillow set",
+    "price": 38.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1015",
+  "customer_email": "lucas.fernandez@example.com",
+  "customer_name": "Lucas Fernández",
+  "status": "delivered",
+  "order_date": "2026-09-30",
+  "delivered_date": "2026-10-06",
+  "estimated_delivery": "2026-10-06",
+  "items": [
+   {
+    "sku": "KT-15",
+    "name": "Enamel kettle",
+    "price": 55.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1016",
+  "customer_email": "mia.dupont@example.com",
+  "customer_name": "Mia Dupont",
+  "status": "delivered",
+  "order_date": "2026-09-28",
+  "delivered_date": "2026-10-04",
+  "estimated_delivery": "2026-10-04",
+  "items": [
+   {
+    "sku": "TR-16",
+    "name": "Table runner",
+    "price": 26.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1017",
+  "customer_email": "oscar.berg@example.com",
+  "customer_name": "Oscar Berg",
+  "status": "delivered",
+  "order_date": "2026-07-26",
+  "delivered_date": "2026-08-01",
+  "estimated_delivery": "2026-08-01",
+  "items": [
+   {
+    "sku": "LS-17",
+    "name": "Lamp shade",
+    "price": 40.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1018",
+  "customer_email": "ben.walker@example.com",
+  "customer_name": "Ben Walker",
+  "status": "delivered",
+  "order_date": "2026-09-07",
+  "delivered_date": "2026-09-13",
+  "estimated_delivery": "2026-09-13",
+  "items": [
+   {
+    "sku": "TP-18",
+    "name": "Throw pillow",
+    "price": 31.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1019",
+  "customer_email": "chloe.martin@example.com",
+  "customer_name": "Chloé Martin",
+  "status": "delivered",
+  "order_date": "2026-09-06",
+  "delivered_date": "2026-09-12",
+  "estimated_delivery": "2026-09-12",
+  "items": [
+   {
+    "sku": "WB-19",
+    "name": "Wicker basket",
+    "price": 33.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1020",
+  "customer_email": "ines.moreau@example.com",
+  "customer_name": "Inès Moreau",
+  "status": "delivered",
+  "order_date": "2026-10-01",
+  "delivered_date": "2026-10-07",
+  "estimated_delivery": "2026-10-07",
+  "items": [
+   {
+    "sku": "ST-20",
+    "name": "Serving tray",
+    "price": 48.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1021",
+  "customer_email": "ravi.patel@example.com",
+  "customer_name": "Ravi Patel",
+  "status": "delivered",
+  "order_date": "2026-09-29",
+  "delivered_date": "2026-10-05",
+  "estimated_delivery": "2026-10-05",
+  "items": [
+   {
+    "sku": "SD-21",
+    "name": "Soap dish",
+    "price": 12.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1022",
+  "customer_email": "elena.garcia@example.com",
+  "customer_name": "Elena García",
+  "status": "delivered",
+  "order_date": "2026-09-26",
+  "delivered_date": "2026-10-02",
+  "estimated_delivery": "2026-10-02",
+  "items": [
+   {
+    "sku": "TT-22",
+    "name": "Tea towel set",
+    "price": 18.0,
+    "final_sale": false
+   },
+   {
+    "sku": "OG-22",
+    "name": "Oven glove",
+    "price": 14.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1023",
+  "customer_email": "felix.braun@example.com",
+  "customer_name": "Felix Braun",
+  "status": "delivered",
+  "order_date": "2026-10-03",
+  "delivered_date": "2026-10-09",
+  "estimated_delivery": "2026-10-09",
+  "items": [
+   {
+    "sku": "AC-23",
+    "name": "Leather armchair",
+    "price": 150.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1024",
+  "customer_email": "greta.olsen@example.com",
+  "customer_name": "Greta Olsen",
+  "status": "shipped",
+  "order_date": "2026-10-10",
+  "delivered_date": null,
+  "estimated_delivery": "2026-10-16",
+  "items": [
+   {
+    "sku": "GS-24",
+    "name": "Garden stool",
+    "price": 40.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1025",
+  "customer_email": "hugo.bernard@example.com",
+  "customer_name": "Hugo Bernard",
+  "status": "processing",
+  "order_date": "2026-10-12",
+  "delivered_date": null,
+  "estimated_delivery": "2026-10-20",
+  "items": [
+   {
+    "sku": "RA-25",
+    "name": "Reading armchair",
+    "price": 180.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1026",
+  "customer_email": "isabel.torres@example.com",
+  "customer_name": "Isabel Torres",
+  "status": "delivered",
+  "order_date": "2026-09-27",
+  "delivered_date": "2026-10-03",
+  "estimated_delivery": "2026-10-03",
+  "items": [
+   {
+    "sku": "WC-26",
+    "name": "Wall clock (clearance)",
+    "price": 25.0,
+    "final_sale": true
+   }
+  ]
+ },
+ {
+  "order_id": "O-1027",
+  "customer_email": "jamal.hassan@example.com",
+  "customer_name": "Jamal Hassan",
+  "status": "delivered",
+  "order_date": "2026-09-30",
+  "delivered_date": "2026-10-06",
+  "estimated_delivery": "2026-10-06",
+  "items": [
+   {
+    "sku": "BT-27",
+    "name": "Bamboo tray",
+    "price": 34.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1028",
+  "customer_email": "katrin.vogel@example.com",
+  "customer_name": "Katrin Vogel",
+  "status": "delivered",
+  "order_date": "2026-10-02",
+  "delivered_date": "2026-10-08",
+  "estimated_delivery": "2026-10-08",
+  "items": [
+   {
+    "sku": "PL-28",
+    "name": "Pendant lamp shade",
+    "price": 52.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1029",
+  "customer_email": "leon.faure@example.com",
+  "customer_name": "Léon Faure",
+  "status": "delivered",
+  "order_date": "2026-07-19",
+  "delivered_date": "2026-07-25",
+  "estimated_delivery": "2026-07-25",
+  "items": [
+   {
+    "sku": "CT-29",
+    "name": "Cutlery tray",
+    "price": 29.0,
+    "final_sale": false
+   }
+  ]
+ },
+ {
+  "order_id": "O-1030",
+  "customer_email": "maria.silva@example.com",
+  "customer_name": "María Silva",
+  "status": "delivered",
+  "order_date": "2026-08-27",
+  "delivered_date": "2026-09-02",
+  "estimated_delivery": "2026-09-02",
+  "items": [
+   {
+    "sku": "PM-30",
+    "name": "Placemat set",
+    "price": 27.0,
+    "final_sale": false
+   }
+  ]
+ }
+]

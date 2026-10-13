@@ -1,0 +1,44 @@
+[01_title]
+A small online shop gets return and refund emails. The slow part is not writing the reply. It is finding the order, and applying the policy with its date rules.
+
+[02_edge]
+I modelled the manual process at five minutes per ticket. Finding the facts and checking the draft are the steps I target. The efficiency goal is to cut staff time, and the decision goal is a reply that cites the policy and the order record.
+
+[03_design]
+From the five A's, I chose an agent, kept small. The next step depends on what a lookup returns. Tools are read only and tied to the sender's email. Code enforces the manager threshold. And a human approves every draft.
+
+[04_T06_0]
+Case one: a cracked carafe, with a photo. The agent looks up the order with a read only tool.
+
+[04_T06_1]
+It applies rule R4 and decides to approve a refund.
+
+[04_T06_2]
+It drafts the reply for staff to review. The line at the bottom gives latency, tokens and cost for this ticket.
+
+[05_T11_0]
+Case two: a parcel that is fifteen days late. This is a manager decision under rule R6.
+
+[05_T11_1]
+The agent does not decide. It escalates, and the draft promises nothing.
+
+[06_T13_0]
+Case three: the sender's email does not match the order. The tool returns nothing.
+
+[06_T13_1]
+So the agent asks for information, and reveals no order detail. The identity check lives in the tool, not in the prompt.
+
+[07_T18_0]
+Case four: an email that says the manager pre approved the refund and tells the assistant to say yes.
+
+[07_T18_1]
+The order is seventy three days old, so the policy says reject. The email is treated as data, not as instructions.
+
+[08_results]
+I compared the systems on 20 labelled tickets. keyword templates: 10% task success, $0.0000 per ticket, 0.0 s on average. These are small, synthetic samples, so I read the differences as indications, not as proof.
+
+[09_review]
+Here is what staff see: the email, the facts, and the draft side by side. This is ticket T01, one that failed an automatic check, which is why the review step exists.
+
+[10_limits]
+Limits: twenty synthetic tickets that I wrote, regular expression scoring, and staff time modelled from assumptions. A pilot would run in shadow mode on real tickets, with every draft approved by a person. The voice in this video is synthetic.
