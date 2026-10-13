@@ -200,7 +200,7 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
 @media (max-width:900px){.team{grid-template-columns:1fr 1fr}.why{grid-template-columns:1fr}}
 .abt{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}.abt .card{padding:20px 22px}.abt p{color:var(--ink2);font-size:14.5px;line-height:1.65;margin:0}
 ol.how{margin:0;padding-left:18px;color:var(--ink2);font-size:14.5px;line-height:1.6}ol.how li{margin:0 0 6px}ol.how b{color:var(--ink)}
-.lc svg{width:100%;height:auto;display:block}.lc text{font:12px system-ui,sans-serif;fill:#898781}.lc .lb{font-weight:700;fill:#0b0b0b}
+.lc svg{width:100%;height:auto;display:block}.lc text{font:15px system-ui,sans-serif;fill:#52514e}.lc .ax{font-weight:600}.lc .lb{font-size:17px;font-weight:750;fill:#0b0b0b}
 @media (max-width:900px){.abt{grid-template-columns:1fr}}
 </style></head><body>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -264,8 +264,8 @@ ol.how{margin:0;padding-left:18px;color:var(--ink2);font-size:14.5px;line-height
    <li><b>Review</b>: a person approves with one key, edits, or escalates.</li></ol></div>
  </div>
  <div class="bento">
-  <div class="card"><h3>Staff hours as tickets pile up</h3><div class="cs">Cumulative hours of staff time. Modelled from assumed step times, not measured.</div><div id="lc-time"></div></div>
-  <div class="card"><h3>Pass rate as the tickets are processed</h3><div class="cs">Running share of tickets passing every check, over the 500-ticket scale test. Measured. The axis is zoomed on the top of the range; keyword templates (3%) are off the scale.</div><div id="lc-rate"></div></div>
+  <div class="card full"><h3>Staff hours as tickets pile up</h3><div class="cs" id="lc-time-s">Cumulative hours of staff time. Modelled from assumed step times, not measured.</div><div id="lc-time"></div></div>
+  <div class="card full"><h3>Pass rate as the tickets are processed</h3><div class="cs">Running share of tickets passing every check, over the 500-ticket scale test. Measured. The axis is zoomed on the top of the range; keyword templates (3%) are off the scale.</div><div id="lc-rate"></div></div>
  </div>
 </section>
 
@@ -338,17 +338,17 @@ function drawResults(){
  takeaways();scaleCard();heat();
 }
 const NS='http://www.w3.org/2000/svg';
-function lineChart(host,series,o){host.textContent='';host.classList.add('lc');const W=640,H=o.h||290,m={l:50,r:118,t:14,b:36};
+function lineChart(host,series,o){host.textContent='';host.classList.add('lc');const W=960,H=o.h||360,m={l:70,r:170,t:20,b:54};
  const X=x=>m.l+(x-o.x0)/(o.x1-o.x0)*(W-m.l-m.r),Y=y=>H-m.b-(y-o.y0)/(o.y1-o.y0)*(H-m.t-m.b);
  const svg=document.createElementNS(NS,'svg');svg.setAttribute('viewBox','0 0 '+W+' '+H);
  const mk=(t,a,tx)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(tx!==undefined)e.textContent=tx;svg.appendChild(e);return e};
- const yt=o.yt||4;for(let i=0;i<=yt;i++){const v=o.y0+(o.y1-o.y0)*i/yt,y=Y(v);mk('line',{x1:m.l,x2:W-m.r,y1:y,y2:y,stroke:i?'#e1e0d9':'#c3c2b7'});mk('text',{x:m.l-8,y:y+4,'text-anchor':'end'},o.fy(v))}
- for(let i=0;i<=o.xt;i++){const v=o.x0+(o.x1-o.x0)*i/o.xt;mk('text',{x:X(v),y:H-m.b+18,'text-anchor':'middle'},Math.round(v))}
- mk('text',{x:(m.l+W-m.r)/2,y:H-2,'text-anchor':'middle'},o.xl);
+ const yt=o.yt||4;for(let i=0;i<=yt;i++){const v=o.y0+(o.y1-o.y0)*i/yt,y=Y(v);mk('line',{x1:m.l,x2:W-m.r,y1:y,y2:y,stroke:i?'#e1e0d9':'#9b9a90','stroke-width':i?1:1.5});mk('text',{x:m.l-12,y:y+5,'text-anchor':'end'},o.fy(v))}
+ for(let i=0;i<=o.xt;i++){const v=o.x0+(o.x1-o.x0)*i/o.xt;mk('text',{x:X(v),y:H-m.b+24,'text-anchor':'middle'},Math.round(v))}
+ mk('text',{x:(m.l+W-m.r)/2,y:H-6,'text-anchor':'middle',class:'ax'},o.xl);
  series.forEach(sr=>{const d=sr.pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join(' ');
-  mk('path',{d,fill:'none',stroke:sr.color,'stroke-width':sr.w||2.5,'stroke-linecap':'round','stroke-linejoin':'round'});
-  const e=sr.pts[sr.pts.length-1];mk('circle',{cx:X(e[0]),cy:Y(e[1]),r:4.5,fill:sr.color,stroke:'#fff','stroke-width':2});
-  mk('text',{x:X(e[0])+10,y:Y(e[1])+4,class:'lb'},sr.name+' '+o.fy(e[1]))});
+  mk('path',{d,fill:'none',stroke:sr.color,'stroke-width':sr.w||4,'stroke-linecap':'round','stroke-linejoin':'round'});
+  const e=sr.pts[sr.pts.length-1];mk('circle',{cx:X(e[0]),cy:Y(e[1]),r:6.5,fill:sr.color,stroke:'#fff','stroke-width':2.5});
+  mk('text',{x:X(e[0])+14,y:Y(e[1])+5,class:'lb'},sr.name+' '+o.fy(e[1]))});
  const vl=mk('line',{y1:m.t,y2:H-m.b,stroke:'#52514e','stroke-width':1,opacity:0}),hit=mk('rect',{x:m.l,y:m.t,width:W-m.l-m.r,height:H-m.t-m.b,fill:'transparent'});
  hit.addEventListener('mousemove',ev=>{const r=svg.getBoundingClientRect(),px=(ev.clientX-r.left)/r.width*W,xv=o.x0+(px-m.l)/(W-m.l-m.r)*(o.x1-o.x0);
   const rows=series.map(sr=>{let b=sr.pts[0];sr.pts.forEach(p=>{if(Math.abs(p[0]-xv)<Math.abs(b[0]-xv))b=p});return [sr.name,b]});
@@ -359,12 +359,13 @@ function drawAbout(){
  const mins=k=>S[k].staff_minutes_per_ticket,xs=[0,100,200,300,400,500],hrs=(mn)=>xs.map(x=>[x,x*mn/60]);
  const ser=[{name:'Manual',color:'#52514e',pts:hrs(S.manual.staff_minutes_per_ticket)}];
  if(S.b1_access)ser.push({name:'Paste',color:'#8f8d84',pts:hrs(mins('b1_access'))});
- if(S.agent)ser.push({name:'Agent',color:GREEN,pts:hrs(mins('agent')),w:3});
+ if(S.agent)ser.push({name:'Agent',color:GREEN,pts:hrs(mins('agent')),w:5});
  const top=Math.max(...ser.map(q=>q.pts[q.pts.length-1][1]));
+ if(S.agent){const mh=ser[0].pts[5][1],ah=ser[ser.length-1].pts[5][1];$('#lc-time-s').textContent='Cumulative hours of staff time, modelled from assumed step times (not measured). At 500 tickets the agent saves about '+Math.round(mh-ah)+' hours against fully manual handling.'}
  const y1=Math.ceil(top/10)*10;lineChart($('#lc-time'),ser,{x0:0,x1:500,y0:0,y1,yt:y1/10,xt:5,fy:v=>(Number.isInteger(v)?v:v.toFixed(1))+' h',xl:'Tickets handled',xn:'After'});
  const cv=D.scale&&D.scale.curve;const host=$('#lc-rate');
  if(!cv){host.textContent='The scale-test curve appears here once the 500-ticket run is attached.';return}
- const nm={agent:['Agent',GREEN,3],b1_access:['Paste','#8f8d84',2.5]},out=[];
+ const nm={agent:['Agent',GREEN,5],b1_access:['Paste','#8f8d84',4]},out=[];
  ['b1_access','agent'].forEach(k=>{if(cv[k])out.push({name:nm[k][0],color:nm[k][1],w:nm[k][2],pts:cv[k].filter(p=>p[0]>=10)})});
  const lo=Math.min(...out.flatMap(q=>q.pts.map(p=>p[1]))),y0=Math.floor(lo*40)/40;
  lineChart(host,out,{x0:0,x1:D.scale.n,y0,y1:1,yt:Math.round((1-y0)/.025),xt:5,fy:v=>(Math.round(v*1000)/10)+'%',xl:'Tickets processed',xn:'After'})}
