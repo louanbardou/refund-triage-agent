@@ -245,7 +245,7 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
  <div class="app"><div class="inbox"><div class="ftabs" id="ftabs"></div><div class="ilist" id="ilist"></div></div><div class="work" id="work"></div></div>
 </section>
 
-<section class="view" id="v-video"><h2>Demo video</h2><p class="sub">Narration is synthetic (text to speech).</p>__VIDEO__</section>
+<section class="view" id="v-video"><h2>Demo video</h2>__VIDEO__</section>
 
 <section class="view" id="v-about">
  <h2>The story</h2><p class="sub">Louan Bardou · MSc Data Science and AI for Business, HEC Paris · sole author</p>
