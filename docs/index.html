@@ -20,7 +20,7 @@
 @keyframes d3{to{transform:translate(-28vw,-24vh) scale(1.12)}}
 @keyframes d4{to{transform:translate(-18vw,18vh) scale(1.3)}}
 @media (prefers-reduced-motion:reduce){.bg i{animation:none}}
-body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.55 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;zoom:1.18;background:var(--bg);color:var(--ink);font:18px/1.55 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--acc);text-decoration:none}button{font:inherit;color:inherit}
 .wrap{max-width:1280px;margin:0 auto;padding:0 24px}
 nav{position:sticky;top:0;z-index:30;background:rgba(250,248,255,.6);backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line)}
@@ -151,8 +151,8 @@ ul.lim{margin:0;padding-left:18px;color:var(--ink2);max-width:760px}ul.lim li{ma
 .it .dd{width:8px;height:8px;border-radius:50%;flex:none}
 /* desktop: the whole platform fits one screen, no page scroll */
 @media (min-width:901px){
- #v-platform.on{animation:none;display:flex;flex-direction:column;height:calc(100vh - 62px);padding:12px 0 14px;overflow:hidden}
- .clean #v-platform.on{height:100vh}
+ #v-platform.on{animation:none;zoom:.92;display:flex;flex-direction:column;height:calc(100vh / 1.0856 - 74px);padding:12px 0 14px;overflow:hidden}
+ .clean #v-platform.on{height:calc(100vh / 1.0856)}
  .pbar{flex:none;flex-wrap:nowrap;margin-bottom:10px}
  .pbar .bar{padding:7px 16px;gap:18px;border-radius:12px;min-width:0}.pbar .bar .n{font-size:20.5px}.pbar .bar .k{font-size:13px}
  .pbar .tog{white-space:nowrap}
@@ -200,7 +200,7 @@ ol.how{margin:0;padding-left:18px;color:var(--ink2);font-size:17.5px;line-height
 .offer>div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh)}
 .offer b{display:block;font-size:14.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}.offer span{color:var(--ink);font-size:18px;line-height:1.5}
 @media (max-width:900px){.offer{grid-template-columns:1fr}}
-.lv{display:block;width:100%;max-width:880px;margin:0 0 28px;border-radius:var(--r);border:1px solid var(--line);box-shadow:var(--sh);background:#000}
+.lv{display:block;width:100%;max-width:1000px;margin:0 0 28px;border-radius:var(--r);border:1px solid var(--line);box-shadow:var(--sh);background:#000}
 </style></head><body>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <nav><div class="wrap"><div class="logo" onclick="go('overview')"><svg class="mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a7cff"/><stop offset="1" stop-color="#3b82e6"/></linearGradient></defs><circle cx="16" cy="16" r="16" fill="url(#lg)"/><rect x="6.8" y="10.6" width="17.4" height="12" rx="2.4" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M7.6 11.9l7.9 5.6 7.9-5.6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23.6" cy="22.6" r="5.3" fill="#1a9e62" stroke="#fff" stroke-width="1.6"/><path d="M21.2 22.7l1.8 1.8 3.2-3.5" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Refund Triage</div>
